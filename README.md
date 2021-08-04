@@ -5,10 +5,10 @@ Clone repository:<br>
   ```git clone git@github.com:grashidi/aml_project.git```<br>
   
 Change into code directory:<br>
-  ```cd code```<br>
+  ```cd aml_project/code```<br>
   
 Make installation script executable:<br>
-  ```chmod +x installation.sh```<br>
+  ```chmod +x install.sh```<br>
   
 Run installation script:<br>
   ```./install.sh```<br>
