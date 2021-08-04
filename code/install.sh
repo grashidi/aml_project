@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-python3 -m venv aml_env
+python3 -m venv env
 
-source aml_env/bin/activate
+source env/bin/activate
 
 while IFS= read -r package; do
      pip3 install $package
