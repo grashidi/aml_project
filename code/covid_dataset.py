@@ -54,8 +54,8 @@ class CovidDataset(Dataset):
             self.img_list += cls_list
 
         # Mean and std are calculated from the train dataset
-        self.normalize = transforms.Normalize(mean=[0.45271412, 0.45271412, 0.45271412],
-                                              std=[0.33165374, 0.33165374, 0.33165374])
+        self.normalize = transforms.Normalize(mean=[0.2099, 0.2098, 0.2098],
+                                              std=[0.7148, 0.7148, 0.7148])
 
         if train:
              self.transform = self.get_train_transforms(p)

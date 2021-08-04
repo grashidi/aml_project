@@ -28,13 +28,29 @@ if __name__ == "__main__":
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=False)
     test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=False)
 
-    for batch_index, batch_samples in enumerate(train_loader):
-        im, labels = batch_samples['img'], batch_samples['label']
-        plt.imshow(im[0,1,:,:].numpy(), alpha=1.0)
-        plt.savefig("test_" + str(batch_index) + ".png")
+    # # check out some of the images
+    # for batch_index, batch_samples in enumerate(train_loader):
+    #     im, labels = batch_samples['img'], batch_samples['label']
+    #     plt.imshow(im[0,1,:,:].numpy(), alpha=1.0)
+    #     plt.savefig("test_" + str(batch_index) + ".png")
+    #
+    #     if batch_index > 18:
+    #         break
 
-        if batch_index > 18:
-            break
+    # # compute mean and std for dataset
+    # mean = 0.
+    # std = 0.
+    # for batch_samples in train_loader:
+    #     images, labels = batch_samples['img'], batch_samples['label']
+    #     samples = images.size(0) # batch size (the last batch can have smaller size!)
+    #     images = images.view(samples, images.size(1), -1)
+    #     mean += images.mean(2).sum(0)
+    #     std += images.std(2).sum(0)
+    #
+    # mean /= len(train_loader.dataset)
+    # std /= len(train_loader.dataset)
+    #
+    # print(mean, std)
 
 
     # load model pretrained on ImageNet
