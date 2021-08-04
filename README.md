@@ -1,13 +1,16 @@
 # aml_project
 
 ## Installation
-Clone repository<br>
+Clone repository:<br>
   ```git clone git@github.com:grashidi/aml_project.git```<br>
-Change into code directory<br>
+  
+Change into code directory:<br>
   ```cd code```<br>
-Make installation script executable<br>
+  
+Make installation script executable:<br>
   ```chmod +x installation.sh```<br>
-Run installation script<br>
+  
+Run installation script:<br>
   ```./install.sh```<br>
 
 The installation script creates a virtual environment and installs all packages within this virtual environment.<br>
