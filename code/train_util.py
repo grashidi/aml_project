@@ -7,8 +7,9 @@ from sklearn.metrics import roc_auc_score
 
 def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs):
     device = "cuda"
-    device_count = torch.cuda.device_count()
 
+    # Check out available devices
+    device_count = torch.cuda.device_count()
     if device_count > 1:
         print("Devices in use:")
         for dc in device_count:
@@ -40,11 +41,15 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
             loss.backward()
             optimizer.step()
 
-            # print statistics
+            # collect loss
             running_loss += loss.item()
-            # val_loss += loss.item()
-            if batch_index % vote_num == 99:    # print every 100 mini-batches
-                target_list, score_list, pred_list, curr_val_loss = validate(model, criterion, val_loader, device)
+
+            # evaluate every 100 minibatches
+            if batch_index % vote_num == 99:
+                target_list, score_list, pred_list, curr_val_loss = validate(model,
+                                                                             criterion,
+                                                                             val_loader,
+                                                                             device)
 
                 val_loss += curr_val_loss
                 precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
@@ -66,6 +71,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
 
                 running_loss = 0.0
 
+        # print val loss and adjust learning rate according to val loss
         print("val_loss: ", val_loss.item() / (len(train_loader) / vote_num))
         scheduler.step(val_loss)
 
@@ -74,21 +80,28 @@ def validate(model, criterion, val_loader, device):
     model.eval()
     val_loss = 0
     correct = 0
-    results = []
 
-    TP = 0
-    TN = 0
-    FN = 0
-    FP = 0
+    TP = 0 # true positive
+    TN = 0 # true negative
+    FN = 0 # false negative
+    FP = 0 # false positive
 
     # Don't update model
     with torch.no_grad():
-        tpr_list = []
-        fpr_list = []
-
+        # list containing prediction of the model
+        # 0 for covid negative prediction
+        # 1 for covid positive prediction
         predlist = []
-        scorelist = []
+
+        # list containing the true values
+        # 0 for covid negative
+        # 1 for covid positive
         targetlist = []
+
+        # list containing the softmax values of the predicted logits
+        scorelist = []
+
+
         # Predict
         for batch_index, batch_samples in enumerate(val_loader):
             images, labels = batch_samples['img'].to(device), batch_samples['label'].to(device)
