@@ -4,7 +4,7 @@ from torch.utils.data import  DataLoader
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from covid_dataset import CovidDataset
-from train_util import fit
+from train_util import fit, test
 
 
 if __name__ == "__main__":
@@ -76,3 +76,4 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
 
     fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS)
+    test(resnet18, criterion, test_loader)
