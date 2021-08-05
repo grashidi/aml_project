@@ -1,8 +1,10 @@
 import torchvision.models as models
 import torch.nn as nn
 from torch.utils.data import  DataLoader
+import torch.optim as optim
 from matplotlib import pyplot as plt
 from covid_dataset import CovidDataset
+from train_util import fit
 
 
 if __name__ == "__main__":
@@ -69,3 +71,8 @@ if __name__ == "__main__":
             param.requires_grad = True
 
     #train ...
+    optimizer = optim.Adam(resnet18.parameters())
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=1)
+    criterion = nn.CrossEntropyLoss()
+
+    fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS)
