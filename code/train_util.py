@@ -18,11 +18,13 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
         print("No acclerator available. Using CPU.")
         device = "cpu"
 
+    model.to(device)
+
     for e in range(epochs):
         running_loss = 0.0
         val_loss = 0.0
         for batch_index, batch_samples in enumerate(train_loader, 0):
-            images, labels = batch_samples['img'], batch_samples['label']
+            images, labels = batch_samples['img'].to(device), batch_samples['label'].to(device)
 
             # zero the parameter gradients
             optimizer.zero_grad()
