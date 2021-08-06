@@ -43,7 +43,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
         running_loss = 0.0
         val_loss = 0.0
         for batch_index, batch_samples in enumerate(train_loader, 0):
-            images, labels = batch_samples['img'].to(device), batch_samples['label'].to(device)
+            images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -128,7 +128,7 @@ def validate(model, criterion, val_loader, device):
 
         # Predict
         for batch_index, batch_samples in enumerate(val_loader):
-            images, labels = batch_samples['img'].to(device), batch_samples['label'].to(device)
+            images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
             output = model(images)
 
@@ -193,7 +193,7 @@ def test(model, criterion, test_loader):
         # Predict
         print("Testing ...")
         for batch_samples in tqdm(test_loader):
-            images, labels = batch_samples['img'].to(device), batch_samples['label'].to(device)
+            images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
             output = model(images)
 
