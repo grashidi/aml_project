@@ -7,6 +7,18 @@ from tqdm import tqdm
 
 
 def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs):
+    """
+    Trains the given model
+
+    Args:
+        model (model class): Model to be trained.
+        optimizer (optimizer class): Optimizer to be used.
+        scheduler (scheduler class): Scheduler to be used.
+        criterion (loss class): Loss to be used.
+        train_loader (data loader class): Data loader containing trainig data.
+        val_loader (data loader class):  Data loader containing validation data.
+        epochs (int): Number epochs.
+    """
     device = "cuda"
 
     # Check out available devices
@@ -78,6 +90,26 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
 
 
 def validate(model, criterion, val_loader, device):
+    """
+    Validates the given model
+
+    Args:
+        model (model class): Model to be trained.
+        criterion (loss class): Loss to be used.
+        val_loader (data loader class):  Data loader containing validation data.
+        device (string): Device to be used.
+
+    Returns:
+        target_list (list): list containig the true labels
+                            (0 for covid negative label)
+                            (1 for covid positive label)
+        score_list (list): list containing the softmax values of the predicted logits
+        pred_list (list): list containig the model's predictions
+                          (0 for covid negative prediction)
+                          (1 for covid positive prediction)
+        val_loss (float): average validation loss
+
+    """
     model.eval()
     val_loss = 0
     correct = 0
@@ -89,17 +121,8 @@ def validate(model, criterion, val_loader, device):
 
     # Don't update model
     with torch.no_grad():
-        # list containing prediction of the model
-        # 0 for covid negative prediction
-        # 1 for covid positive prediction
         pred_list = []
-
-        # list containing the true values
-        # 0 for covid negative
-        # 1 for covid positive
         target_list = []
-
-        # list containing the softmax values of the predicted logits
         score_list = []
 
 
@@ -124,6 +147,14 @@ def validate(model, criterion, val_loader, device):
 
 
 def test(model, criterion, test_loader):
+    """
+    Tests the given model
+
+    Args:
+        model (model class): Model to be trained.
+        criterion (loss class): Loss to be used.
+        test_loader (data loader class):  Data loader containing test data.
+    """
     device = "cuda"
 
     # Check out available devices
@@ -153,17 +184,9 @@ def test(model, criterion, test_loader):
 
     # Don't update model
     with torch.no_grad():
-        # list containing prediction of the model
-        # 0 for covid negative prediction
-        # 1 for covid positive prediction
+        #same as in validation
         pred_list = []
-
-        # list containing the true values
-        # 0 for covid negative
-        # 1 for covid positive
         target_list = []
-
-        # list containing the softmax values of the predicted logits
         score_list = []
 
 
@@ -201,6 +224,23 @@ def test(model, criterion, test_loader):
 
 
 def compute_statistics(pred_list, score_list, target_list):
+    """
+    Computes precision, recall, accuracy and AUC (area under the curve)
+
+    Args:
+        pred_list (list): list containig the model's predictions
+                          (0 for covid negative prediction)
+                          (1 for covid positive prediction)
+        score_list (list): list containing the softmax values of the predicted logits
+        target_list (list): list containig the true labels
+                            (0 for covid negative label)
+                            (1 for covid positive label)
+    Returns:
+        precision (float): precision computed from the given inputs
+        recall (float): recall computed from the given inputs
+        acc (float): accuracy computed from the given inputs
+        auc (float): AUC computed from the given inputs
+    """
     pred_list = np.asarray(pred_list)
     score_list = np.asarray(score_list)
     target_list = np.asarray(target_list)
