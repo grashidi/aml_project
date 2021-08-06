@@ -1,8 +1,11 @@
+import os
+import torch
 import torchvision.models as models
 import torch.nn as nn
 from torch.utils.data import  DataLoader
 import torch.optim as optim
 from matplotlib import pyplot as plt
+from datetime import datetime
 from covid_dataset import CovidDataset
 from train_util import fit, test
 
@@ -75,5 +78,12 @@ if __name__ == "__main__":
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=1)
     criterion = nn.CrossEntropyLoss()
 
-    fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS)
+    # fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS)
     test(resnet18, criterion, test_loader)
+
+    if not os.path.exists("model_backup/"):
+        os.makedirs("model_backup/")
+    torch.save(resnet18.state_dict(),
+               "model_backup/resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
+                                                             BATCH_SIZE,
+                                                             datetime.now().strftime("%d-%m-%Y_%H:%M:%S")))
