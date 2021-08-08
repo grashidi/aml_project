@@ -6,6 +6,7 @@ from PIL import Image
 import glob
 from numpy import random
 import torchvision.transforms.functional as TF
+from tqdm import tqdm
 
 
 def read_txt(txt_path):
@@ -30,7 +31,7 @@ class RotationTransform:
 
 
 class CovidDataset(Dataset):
-    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, train=False, p=0.5):
+    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, train=False, p=0.5, use_cache=False):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -47,6 +48,7 @@ class CovidDataset(Dataset):
         self.classes = ['NonCOVID', 'COVID']
         self.num_cls = len(self.classes)
         self.img_list = []
+        self.use_cache = use_cache
 
         for c in range(self.num_cls):
             cls_list = [[os.path.join(r + "images/", self.classes[c], item), c]
@@ -62,6 +64,15 @@ class CovidDataset(Dataset):
         else:
             self.transform = self.get_test_transforms(p)
 
+        if self.use_cache:
+            self.cached_data = []
+
+            progressbar = tqdm(range(len(self.img_list)), desc="Caching")
+            for i, data in zip(progressbar, self.img_list):
+                img_path, label = data
+                image = Image.open(img_path).convert('RGB')
+                self.cached_data.append((self.transform(image), label))
+
     def __len__(self):
         return len(self.img_list)
 
@@ -69,13 +80,19 @@ class CovidDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        img_path = self.img_list[idx][0]
-        image = Image.open(img_path).convert('RGB')
+        if self.use_cache:
+             image, label = self.cached_data[idx]
+             sample = {'img': image,
+                       'label': int(label)}
+             return sample
+        else:
+            img_path = self.img_list[idx][0]
+            image = Image.open(img_path).convert('RGB')
 
-        image = self.transform(image)
-        sample = {'img': image,
-                  'label': int(self.img_list[idx][1])}
-        return sample
+            image = self.transform(image)
+            sample = {'img': image,
+                      'label': int(self.img_list[idx][1])}
+            return sample
 
     def get_train_transforms(self, p=0.5):
         rotation_transform = RotationTransform(p, angles=[0, 90, 180, 270])

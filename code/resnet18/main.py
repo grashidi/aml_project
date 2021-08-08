@@ -21,13 +21,16 @@ if __name__ == "__main__":
     trainset = CovidDataset(root_dir=root_dir,
                             txt_COVID=txt_COVID + "/train.txt",
                             txt_NonCOVID=txt_NonCOVID + "/train.txt",
-                            train=True)
+                            train=True,
+                            use_cache=True)
     valset = CovidDataset(root_dir=root_dir,
                           txt_COVID=txt_COVID + "/val.txt",
-                          txt_NonCOVID=txt_NonCOVID + "/val.txt")
+                          txt_NonCOVID=txt_NonCOVID + "/val.txt",
+                          use_cache=True)
     testset = CovidDataset(root_dir=root_dir,
                            txt_COVID=txt_COVID + "/test.txt",
-                           txt_NonCOVID=txt_NonCOVID + "/test.txt")
+                           txt_NonCOVID=txt_NonCOVID + "/test.txt",
+                           use_cache=True)
 
     train_loader = DataLoader(trainset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=False)
@@ -91,7 +94,7 @@ if __name__ == "__main__":
 
     if not os.path.exists("model_backup/"):
         os.makedirs("model_backup/")
-        
+
     torch.save(resnet18.state_dict(),
                "model_backup/resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
                                                              BATCH_SIZE,
