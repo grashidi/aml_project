@@ -69,7 +69,7 @@ if __name__ == "__main__":
         param.requires_grad = False
 
     # unfreeze last two layers
-    for layer in [resnet18.avgpool, resnet18.fc]:
+    for layer in [resnet18.layer4, resnet18.avgpool, resnet18.fc]:
         for param in layer.parameters():
             param.requires_grad = True
 
