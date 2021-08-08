@@ -91,6 +91,7 @@ if __name__ == "__main__":
 
     if not os.path.exists("model_backup/"):
         os.makedirs("model_backup/")
+        
     torch.save(resnet18.state_dict(),
                "model_backup/resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
                                                              BATCH_SIZE,
