@@ -12,7 +12,7 @@ from train_util import fit, test
 
 if __name__ == "__main__":
     BATCH_SIZE = 10 # adpated from paper
-    NUM_EPOCHS = 1 # adpated from paper
+    NUM_EPOCHS = 10 # adpated from paper
 
     root_dir = ["../../data/ct_scan/", "../../data/xray/"]
     txt_COVID = "data_split/COVID/"
