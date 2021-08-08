@@ -12,7 +12,7 @@ from train_util import fit, test
 
 if __name__ == "__main__":
     BATCH_SIZE = 10 # adpated from paper
-    NUM_EPOCHS = 10 # adpated from paper
+    NUM_EPOCHS = 1 # adpated from paper
 
     root_dir = ["../../data/ct_scan/", "../../data/xray/"]
     txt_COVID = "data_split/COVID/"
@@ -74,11 +74,19 @@ if __name__ == "__main__":
             param.requires_grad = True
 
     #train ...
+    if not os.path.exists("model_backup/"):
+        os.makedirs("model_backup/")
+
+    time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+    stats_path = "model_backup/stats_resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
+                                                                     BATCH_SIZE,
+                                                                     time)
+
     optimizer = optim.Adam(resnet18.parameters())
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=1)
     criterion = nn.CrossEntropyLoss()
 
-    # fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS)
+    fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
     test(resnet18, criterion, test_loader)
 
     if not os.path.exists("model_backup/"):
@@ -86,4 +94,4 @@ if __name__ == "__main__":
     torch.save(resnet18.state_dict(),
                "model_backup/resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
                                                              BATCH_SIZE,
-                                                             datetime.now().strftime("%d-%m-%Y_%H:%M:%S")))
+                                                             time))

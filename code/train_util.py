@@ -6,7 +6,7 @@ from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
 
-def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs):
+def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs, stats_path):
     """
     Trains the given model
 
@@ -18,6 +18,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
         train_loader (data loader class): Data loader containing trainig data.
         val_loader (data loader class):  Data loader containing validation data.
         epochs (int): Number epochs.
+        stats_path (string): Path for writing statistics to file.
     """
     device = "cuda"
 
@@ -38,6 +39,13 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
     model.to(device)
 
     vote_num = 100
+    stats = ("epoch\t"
+             "batch_number\t"
+             "train_loss\t"
+             "precision\t"
+             "recall\t"
+             "accuracy\t"
+             "AUC\n")
 
     for e in range(epochs):
         running_loss = 0.0
@@ -82,11 +90,22 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
                        acc,
                        auc))
 
+                stats += (str(e + 1) + "\t" +
+                          str(batch_index + 1) + "\t" +
+                          str(running_loss / vote_num) + "\t" +
+                          str(precision) + "\t" +
+                          str(recall) + "\t" +
+                          str(acc) + "\t" +
+                          str(auc) + "\n")
+
                 running_loss = 0.0
 
         # print val loss and adjust learning rate according to val loss
         print("val_loss: ", val_loss.item() / (len(train_loader) / vote_num))
         scheduler.step(val_loss)
+
+    with open(stats_path, "w") as f:
+        f.write(stats)
 
 
 def validate(model, criterion, val_loader, device):
