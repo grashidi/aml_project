@@ -39,6 +39,14 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
     model.to(device)
 
     vote_num = 100
+
+    running_loss = 0.
+    val_loss = 0.
+    precision = 0.
+    recall = 0.
+    acc = 0.
+    auc = 0.
+
     stats = ("epoch\t"
              "batch_number\t"
              "train_loss\t"
@@ -48,9 +56,20 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
              "AUC\n")
 
     for e in range(epochs):
+        progressbar = tqdm(range(len(train_loader)), desc='Training...')
+        progressbar.set_postfix({"epoch": e + 1,
+                                 "batch_number": 1,
+                                 "train_loss": running_loss,
+                                 "precision": precision,
+                                 "recall": recall,
+                                 "accuracy": acc,
+                                 "AUC": auc,
+                                 "val_loss": val_loss})
+
         running_loss = 0.0
         val_loss = 0.0
-        for batch_index, batch_samples in enumerate(train_loader, 0):
+
+        for batch_index, batch_samples in zip(progressbar, train_loader):
             images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
             # zero the parameter gradients
@@ -75,20 +94,14 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
                 val_loss += curr_val_loss
                 precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
 
-                print(("epoch: %d\t"
-                       "batch_number: %5d\t"
-                       "train_loss: %.3f\t"
-                       "precision: %.3f\t"
-                       "recall: %.3f\t"
-                       "accuracy: %.3f\t"
-                       "AUC: %.3f") %
-                      (e + 1,
-                       batch_index + 1,
-                       running_loss / vote_num,
-                       precision,
-                       recall,
-                       acc,
-                       auc))
+                progressbar.set_postfix({"epoch": e + 1,
+                       "batch_number": batch_index + 1,
+                       "train_loss": running_loss / vote_num,
+                       "precision": precision,
+                       "recall": recall,
+                       "accuracy": acc,
+                       "AUC": auc,
+                       "val_loss": val_loss.item() / (batch_index / vote_num)})
 
                 stats += (str(e + 1) + "\t" +
                           str(batch_index + 1) + "\t" +
@@ -100,8 +113,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
 
                 running_loss = 0.0
 
-        # print val loss and adjust learning rate according to val loss
-        print("val_loss: ", val_loss.item() / (len(train_loader) / vote_num))
+        val_loss = val_loss.item() / (len(train_loader) / vote_num)
         scheduler.step(val_loss)
 
     with open(stats_path, "w") as f:
@@ -133,17 +145,11 @@ def validate(model, criterion, val_loader, device):
     val_loss = 0
     correct = 0
 
-    TP = 0 # true positive
-    TN = 0 # true negative
-    FN = 0 # false negative
-    FP = 0 # false positive
-
     # Don't update model
     with torch.no_grad():
         pred_list = []
         target_list = []
         score_list = []
-
 
         # Predict
         for batch_index, batch_samples in enumerate(val_loader):
@@ -193,13 +199,10 @@ def test(model, criterion, test_loader):
     model.eval()
     model.to(device)
 
+    vote_num = 100
+
     test_loss = 0
     correct = 0
-
-    TP = 0 # true positive
-    TN = 0 # true negative
-    FN = 0 # false negative
-    FP = 0 # false positive
 
     # Don't update model
     with torch.no_grad():
@@ -208,10 +211,15 @@ def test(model, criterion, test_loader):
         target_list = []
         score_list = []
 
-
         # Predict
-        print("Testing ...")
-        for batch_samples in tqdm(test_loader):
+        progressbar = tqdm(range(len(test_loader)), desc='Testing...')
+        progressbar.set_postfix({"test_loss": 0.,
+                                 "precision": 0.,
+                                 "recall": 0.,
+                                 "accuracy": 0.,
+                                 "AUC": 0.})
+
+        for batch_index, batch_samples in zip(progressbar, test_loader):
             images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
             output = model(images)
@@ -227,19 +235,14 @@ def test(model, criterion, test_loader):
             score_list += [s.item() for s in score.cpu()[:,1]]
             target_list += targetcpu
 
-        precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+            if batch_index % vote_num == 99:
+                precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
 
-        print(("test_loss: %.3f\t"
-               "precision: %.3f\t"
-               "recall: %.3f\t"
-               "accuracy: %.3f\t"
-               "AUC: %.3f") %
-              (test_loss / len(test_loader),
-               precision,
-               recall,
-               acc,
-               auc))
-
+                progressbar.set_postfix({"test_loss": test_loss.item() / batch_index,
+                                         "precision": precision,
+                                         "recall": recall,
+                                         "accuracy": acc,
+                                         "AUC": auc})
 
 
 def compute_statistics(pred_list, score_list, target_list):
