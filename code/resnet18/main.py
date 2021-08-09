@@ -13,6 +13,7 @@ from train_util import fit, test
 if __name__ == "__main__":
     BATCH_SIZE = 10 # adpated from paper
     NUM_EPOCHS = 10 # adpated from paper
+    USE_CACHE = True
 
     root_dir = ["../../data/ct_scan/", "../../data/xray/"]
     txt_COVID = "data_split/COVID/"
@@ -21,20 +22,20 @@ if __name__ == "__main__":
     trainset = CovidDataset(root_dir=root_dir,
                             txt_COVID=txt_COVID + "/train.txt",
                             txt_NonCOVID=txt_NonCOVID + "/train.txt",
-                            train=True,
-                            use_cache=True)
+                            train=False,
+                            use_cache=USE_CACHE)
     valset = CovidDataset(root_dir=root_dir,
                           txt_COVID=txt_COVID + "/val.txt",
                           txt_NonCOVID=txt_NonCOVID + "/val.txt",
-                          use_cache=True)
+                          use_cache=USE_CACHE)
     testset = CovidDataset(root_dir=root_dir,
                            txt_COVID=txt_COVID + "/test.txt",
                            txt_NonCOVID=txt_NonCOVID + "/test.txt",
-                           use_cache=True)
+                           use_cache=USE_CACHE)
 
     train_loader = DataLoader(trainset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
-    val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=False)
-    test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=False)
+    val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
+    test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
 
     # # check out some of the images
     # for batch_index, batch_samples in enumerate(train_loader):
