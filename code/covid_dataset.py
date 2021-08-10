@@ -66,7 +66,7 @@ class CovidDataset(Dataset):
         if train:
              self.transform = self.get_train_transforms(p)
         else:
-            self.transform = self.get_test_transforms(p)
+            self.transform = self.get_test_transforms()
 
         if self.use_cache:
             self.cache()
@@ -98,7 +98,7 @@ class CovidDataset(Dataset):
             return sample
 
     def get_train_transforms(self, p=0.5):
-        rotation_transform = RotationTransform(p, angles=[0, 90, 180, 270])
+        rotation_transform = RotationTransform(p, angles=[90, 180, 270])
 
         train_transform = transforms.Compose([
             transforms.Resize((224,224)),
@@ -111,7 +111,7 @@ class CovidDataset(Dataset):
 
         return train_transform
 
-    def get_test_transforms(self, p=0.5):
+    def get_test_transforms(self):
         test_transform = transforms.Compose([
             transforms.Resize((224,224)),
             transforms.ToTensor(),
