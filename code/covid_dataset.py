@@ -31,7 +31,7 @@ class RotationTransform:
 
 
 class CovidDataset(Dataset):
-    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, train=False, p=0.5, use_cache=False):
+    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, train=False, p=0.5, use_cache=False, pre_transform=False):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -41,7 +41,6 @@ class CovidDataset(Dataset):
             txt_NonCOVID (string): Path to the txt file with annotations for COVID negative images.
             train (bool): Apply training transforms if true.
             p (float): Probability for data augmentations.
-
         """
         self.root_dir = root_dir
         self.txt_path = [txt_NonCOVID, txt_COVID]
@@ -49,6 +48,8 @@ class CovidDataset(Dataset):
         self.num_cls = len(self.classes)
         self.img_list = []
         self.use_cache = use_cache
+        self.pre_transform = pre_transform
+        self.cached_data = []
 
         for c in range(self.num_cls):
             cls_list = [[os.path.join(r + "images/", self.classes[c], item), c]
@@ -65,13 +66,7 @@ class CovidDataset(Dataset):
             self.transform = self.get_test_transforms(p)
 
         if self.use_cache:
-            self.cached_data = []
-
-            progressbar = tqdm(range(len(self.img_list)), desc="Caching")
-            for i, data in zip(progressbar, self.img_list):
-                img_path, label = data
-                image = Image.open(img_path).convert('RGB')
-                self.cached_data.append((self.transform(image), label))
+            self.cache()
 
     def __len__(self):
         return len(self.img_list)
@@ -116,3 +111,16 @@ class CovidDataset(Dataset):
         ])
 
         return test_transform
+
+    def cache(self):
+        progressbar = tqdm(range(len(self.img_list)), desc="Caching")
+        if self.pre_transform:
+            for i, data in zip(progressbar, self.img_list):
+                img_path, label = data
+                image = Image.open(img_path).convert('RGB')
+                self.cached_data.append((self.transform(image), label))
+        else:
+            for i, data in zip(progressbar, self.img_list):
+                img_path, label = data
+                image = Image.open(img_path).convert('RGB')
+                self.cached_data.append((image, label))
