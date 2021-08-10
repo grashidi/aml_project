@@ -37,8 +37,8 @@ class CovidDataset(Dataset):
             root_dir (string): Directory with all the images.
             transform (callable, optional): Optional transform to be applied
                 on a sample.
-            txt_COVID (string): Path to the txt file with annotations for COVID positive images.
-            txt_NonCOVID (string): Path to the txt file with annotations for COVID negative images.
+            txt_COVID (string): Path to the txt file containing the datasplit's COVID positive image paths.
+            txt_NonCOVID (string): Path to the txt file containing the datasplit's COVID negative image paths.
             train (bool): Apply training transforms if true.
             p (float): Probability for data augmentations.
             use_cache (bool): Cache data in main memory before starting the training
