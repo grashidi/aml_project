@@ -79,16 +79,21 @@ class CovidDataset(Dataset):
             idx = idx.tolist()
 
         if self.use_cache:
-             image, label = self.cached_data[idx]
-             sample = {'img': image,
-                       'label': int(label)}
-             return sample
+            if self.pre_transform:
+                 image, label = self.cached_data[idx]
+                 sample = {'img': image,
+                           'label': int(label)}
+                 return sample
+            else:
+                 image, label = self.cached_data[idx]
+                 sample = {'img': self.transform(image),
+                           'label': int(label)}
+                 return sample
         else:
             img_path = self.img_list[idx][0]
             image = Image.open(img_path).convert('RGB')
 
-            image = self.transform(image)
-            sample = {'img': image,
+            sample = {'img': self.transform(image),
                       'label': int(self.img_list[idx][1])}
             return sample
 
