@@ -12,8 +12,9 @@ from train_util import fit, test
 
 if __name__ == "__main__":
     BATCH_SIZE = 10 # adpated from paper
-    NUM_EPOCHS = 10 # adpated from paper
+    NUM_EPOCHS = 1 # adpated from paper
     USE_CACHE = True
+    PRE_TRANSFORM = True
 
     root_dir = ["../../data/ct_scan/", "../../data/xray/"]
     txt_COVID = "data_split/COVID/"
@@ -23,15 +24,18 @@ if __name__ == "__main__":
                             txt_COVID=txt_COVID + "/train.txt",
                             txt_NonCOVID=txt_NonCOVID + "/train.txt",
                             train=False,
-                            use_cache=USE_CACHE)
+                            use_cache=USE_CACHE,
+                            pre_transform=PRE_TRANSFORM)
     valset = CovidDataset(root_dir=root_dir,
                           txt_COVID=txt_COVID + "/val.txt",
                           txt_NonCOVID=txt_NonCOVID + "/val.txt",
-                          use_cache=USE_CACHE)
+                          use_cache=USE_CACHE,
+                          pre_transform=PRE_TRANSFORM)
     testset = CovidDataset(root_dir=root_dir,
                            txt_COVID=txt_COVID + "/test.txt",
                            txt_NonCOVID=txt_NonCOVID + "/test.txt",
-                           use_cache=USE_CACHE)
+                           use_cache=USE_CACHE,
+                           pre_transform=PRE_TRANSFORM)
 
     train_loader = DataLoader(trainset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
@@ -78,9 +82,6 @@ if __name__ == "__main__":
             param.requires_grad = True
 
     #train ...
-    if not os.path.exists("model_backup/"):
-        os.makedirs("model_backup/")
-
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     stats_path = "model_backup/stats_resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
                                                                      BATCH_SIZE,
