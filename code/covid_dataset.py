@@ -41,9 +41,7 @@ class CovidDataset(Dataset):
             txt_NonCOVID (string): Path to the txt file containing the datasplit's COVID negative image paths.
             train (bool): Apply training transforms if true.
             p (float): Probability for data augmentations.
-            use_cache (bool): Cache data in main memory before starting the training
-            pre_transform (bool): Apply image transformation before starting training
-                                  (only when using caching)
+            use_cache (bool): Cache data in main memory before starting the training.
         """
         self.root_dir = root_dir
         self.txt_path = [txt_NonCOVID, txt_COVID]
