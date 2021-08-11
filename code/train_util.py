@@ -20,23 +20,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
         epochs (int): Number epochs.
         stats_path (string): Path for writing statistics to file.
     """
-    device = "cuda"
-
-    # Check out available devices
-    device_count = torch.cuda.device_count()
-    if device_count > 1:
-        print("Devices in use:")
-        for dc in device_count:
-            print(torch.cuda.get_device_name(device=dc))
-        model = nn.DataParallel(model)
-    elif device_count == 1:
-        print("Device in use:")
-        print(torch.cuda.get_device_name(device=0))
-    else:
-        print("No acclerator available. Using CPU.")
-        device = "cpu"
-
-    model.to(device)
+    model, device = move_model_to_device(model)
 
     vote_num = 100
 
@@ -180,24 +164,9 @@ def test(model, criterion, test_loader):
         criterion (loss class): Loss to be used.
         test_loader (data loader class):  Data loader containing test data.
     """
-    device = "cuda"
-
-    # Check out available devices
-    device_count = torch.cuda.device_count()
-    if device_count > 1:
-        print("Devices in use:")
-        for dc in device_count:
-            print(torch.cuda.get_device_name(device=dc))
-        model = nn.DataParallel(model)
-    elif device_count == 1:
-        print("Device in use:")
-        print(torch.cuda.get_device_name(device=0))
-    else:
-        print("No acclerator available. Using CPU.")
-        device = "cpu"
-
     model.eval()
-    model.to(device)
+
+    model, device = move_model_to_device(model)
 
     vote_num = 100
 
@@ -278,3 +247,33 @@ def compute_statistics(pred_list, score_list, target_list):
     auc = roc_auc_score(target_list, score_list)
 
     return precision, recall, acc, auc
+
+
+def move_model_to_device(model):
+    """
+    Checks out available devices and moves model to devices
+
+    Args:
+        model (model class): model
+    Returns:
+        model (model class): model at device
+        device (string): device
+    """
+    device = "cuda"
+
+    device_count = torch.cuda.device_count()
+    if device_count > 1:
+        print("Devices in use:")
+        for dc in device_count:
+            print(torch.cuda.get_device_name(device=dc))
+        model = nn.DataParallel(model, device_ids=list(range(len(device_count))))
+    elif device_count == 1:
+        print("Device in use:")
+        print(torch.cuda.get_device_name(device=0))
+    else:
+        print("No acclerator available. Using CPU.")
+        device = "cpu"
+
+    model.to(device)
+
+    return model, device
