@@ -94,7 +94,7 @@ class CovidDataset(Dataset):
         rotation_transform = RotationTransform(p, angles=[90, 180, 270])
 
         train_transform = transforms.Compose([
-            transforms.Resize((224,224)),
+            transforms.Resize((256,256)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p),
             transforms.RandomVerticalFlip(p),
@@ -106,7 +106,7 @@ class CovidDataset(Dataset):
 
     def get_test_transforms(self):
         test_transform = transforms.Compose([
-            transforms.Resize((224,224)),
+            transforms.Resize((256,256)),
             transforms.ToTensor(),
             self.normalize
         ])
