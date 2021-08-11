@@ -14,7 +14,6 @@ if __name__ == "__main__":
     BATCH_SIZE = 10 # adpated from paper
     NUM_EPOCHS = 1 # adpated from paper
     USE_CACHE = True
-    PRE_TRANSFORM = True
 
     root_dir = ["../../data/ct_scan/", "../../data/xray/"]
     txt_COVID = "data_split/COVID/"
@@ -24,18 +23,15 @@ if __name__ == "__main__":
                             txt_COVID=txt_COVID + "/train.txt",
                             txt_NonCOVID=txt_NonCOVID + "/train.txt",
                             train=False,
-                            use_cache=USE_CACHE,
-                            pre_transform=PRE_TRANSFORM)
+                            use_cache=USE_CACHE)
     valset = CovidDataset(root_dir=root_dir,
                           txt_COVID=txt_COVID + "/val.txt",
                           txt_NonCOVID=txt_NonCOVID + "/val.txt",
-                          use_cache=USE_CACHE,
-                          pre_transform=PRE_TRANSFORM)
+                          use_cache=USE_CACHE)
     testset = CovidDataset(root_dir=root_dir,
                            txt_COVID=txt_COVID + "/test.txt",
                            txt_NonCOVID=txt_NonCOVID + "/test.txt",
-                           use_cache=USE_CACHE,
-                           pre_transform=PRE_TRANSFORM)
+                           use_cache=USE_CACHE)
 
     train_loader = DataLoader(trainset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
