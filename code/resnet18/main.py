@@ -22,7 +22,7 @@ if __name__ == "__main__":
     trainset = CovidDataset(root_dir=root_dir,
                             txt_COVID=txt_COVID + "/train.txt",
                             txt_NonCOVID=txt_NonCOVID + "/train.txt",
-                            train=False,
+                            train=True,
                             use_cache=USE_CACHE)
     valset = CovidDataset(root_dir=root_dir,
                           txt_COVID=txt_COVID + "/val.txt",
