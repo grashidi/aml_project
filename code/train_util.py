@@ -49,8 +49,6 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
 
     stats_history = {stat: [] for stat in stat_vars.keys()}
 
-    # device = "cpu"
-    # model.to(device)
     for e in range(epochs):
         progressbar = tqdm(range(len(train_loader)), desc='Training...')
         progressbar.set_postfix(stat_vars)
