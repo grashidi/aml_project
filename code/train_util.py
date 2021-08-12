@@ -22,6 +22,9 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
         val_loader (data loader class):  Data loader containing validation data.
         epochs (int): Number epochs.
         stats_path (string): Path for writing statistics to file.
+        additional_stats_enabled (bool): If true precision, recall, accuracy, AUC
+                                         are computed and logged. Turn off those
+                                         statistics for unet training!
     """
     model, device = move_model_to_device(model)
 
@@ -112,6 +115,8 @@ def validate(model, criterion, val_loader, device, additional_stats_enabled):
         criterion (loss class): Loss to be used.
         val_loader (data loader class):  Data loader containing validation data.
         device (string): Device to be used.
+        additional_stats_enabled (bool): If true target_list, score_list and
+                                         pred_list are computed.
 
     Returns:
         target_list (list): list containig the true labels
@@ -162,6 +167,9 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
         model (model class): Model to be trained.
         criterion (loss class): Loss to be used.
         test_loader (data loader class):  Data loader containing test data.
+        additional_stats_enabled (bool): If true precision, recall, accuracy, AUC
+                                         are computed. Turn off those
+                                         statistics for unet testing!
     """
     model.eval()
 
