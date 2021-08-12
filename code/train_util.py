@@ -2,11 +2,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import json
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
+from collections import OrderedDict
 
 
-def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs, stats_path):
+def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
+        epochs, stats_path, additional_stats_enabled=False):
     """
     Trains the given model
 
@@ -22,89 +25,85 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader, epochs
     """
     model, device = move_model_to_device(model)
 
-    vote_num = 100
+    vote_num = len(train_loader) // 10
 
-    running_loss = 0.
+    train_loss = 0.
     val_loss = 0.
     precision = 0.
     recall = 0.
     acc = 0.
     auc = 0.
 
-    stats = ("epoch\t"
-             "batch_number\t"
-             "train_loss\t"
-             "precision\t"
-             "recall\t"
-             "accuracy\t"
-             "AUC\n")
+    stat_vars = OrderedDict()
+    stat_vars["epoch"] = 1
+    stat_vars["batch_number"] = 1
+    stat_vars["train_loss"] = 0.
+    stat_vars["val_loss"] = 0.
 
+    if additional_stats_enabled:
+        additional_stats = ["precision", "recall", "accuracy", "AUC"]
+        for stat in additional_stats: stat_vars[stat] = 0.
+
+    stats_history = {stat: [] for stat in stat_vars.keys()}
+
+    # device = "cpu"
+    # model.to(device)
     for e in range(epochs):
         progressbar = tqdm(range(len(train_loader)), desc='Training...')
-        progressbar.set_postfix({"epoch": e + 1,
-                                 "batch_number": 1,
-                                 "train_loss": running_loss,
-                                 "precision": precision,
-                                 "recall": recall,
-                                 "accuracy": acc,
-                                 "AUC": auc,
-                                 "val_loss": val_loss})
+        progressbar.set_postfix(stat_vars)
 
-        running_loss = 0.0
+        train_loss = 0.0
         val_loss = 0.0
+
+        model.train()
 
         for batch_index, batch_samples in zip(progressbar, train_loader):
             images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
-            # zero the parameter gradients
             optimizer.zero_grad()
 
-            # forward + backward + optimize
             outputs = model(images)
-            loss = criterion(outputs, labels)
+            loss = criterion(outputs, labels.long())
             loss.backward()
             optimizer.step()
 
-            # collect loss
-            running_loss += loss.item()
+            train_loss += loss.item()
 
-            # evaluate every 100 minibatches
-            if batch_index % vote_num == 99:
+            # evaluate
+            if (batch_index + 1) % vote_num == 0:
                 target_list, score_list, pred_list, curr_val_loss = validate(model,
                                                                              criterion,
                                                                              val_loader,
-                                                                             device)
+                                                                             device,
+                                                                             additional_stats_enabled)
 
                 val_loss += curr_val_loss
-                precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+                if additional_stats_enabled:
+                    precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+                    stat_vars["precision"] = precision
+                    stat_vars["recall"] = recall
+                    stat_vars["accuracy"] = acc
+                    stat_vars["AUC"] = auc
 
-                progressbar.set_postfix({"epoch": e + 1,
-                       "batch_number": batch_index + 1,
-                       "train_loss": running_loss / vote_num,
-                       "precision": precision,
-                       "recall": recall,
-                       "accuracy": acc,
-                       "AUC": auc,
-                       "val_loss": val_loss.item() / (batch_index / vote_num)})
+                stat_vars["epoch"] = e + 1
+                stat_vars["batch_number"] = batch_index + 1
+                stat_vars["train_loss"] = train_loss / vote_num
+                stat_vars["val_loss"] = val_loss.item() / ((batch_index + 1) / vote_num)
 
-                stats += (str(e + 1) + "\t" +
-                          str(batch_index + 1) + "\t" +
-                          str(running_loss / vote_num) + "\t" +
-                          str(precision) + "\t" +
-                          str(recall) + "\t" +
-                          str(acc) + "\t" +
-                          str(auc) + "\n")
+                progressbar.set_postfix(stat_vars)
 
-                running_loss = 0.0
+                for stat, val in stat_vars.items(): stats_history[stat].append(val)
+
+                train_loss = 0.0
 
         val_loss = val_loss.item() / (len(train_loader) / vote_num)
         scheduler.step(val_loss)
 
     with open(stats_path, "w") as f:
-        f.write(stats)
+        json.dump(stats_history, f)
 
 
-def validate(model, criterion, val_loader, device):
+def validate(model, criterion, val_loader, device, additional_stats_enabled):
     """
     Validates the given model
 
@@ -129,33 +128,33 @@ def validate(model, criterion, val_loader, device):
     val_loss = 0
     correct = 0
 
-    # Don't update model
     with torch.no_grad():
         pred_list = []
         target_list = []
         score_list = []
 
-        # Predict
         for batch_index, batch_samples in enumerate(val_loader):
             images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
 
             output = model(images)
 
             val_loss += criterion(output, labels.long())
-            score = F.softmax(output, dim=1)
-            pred = output.argmax(dim=1, keepdim=True)
 
-            correct += pred.eq(labels.long().view_as(pred)).sum().item()
+            if additional_stats_enabled:
+                score = F.softmax(output, dim=1)
+                pred = output.argmax(dim=1, keepdim=True)
 
-            targetcpu = [l.item() for l in labels.long().cpu()]
-            pred_list += [p.item() for p in pred.cpu()]
-            score_list += [s.item() for s in score.cpu()[:,1]]
-            target_list += targetcpu
+                correct += pred.eq(labels.long().view_as(pred)).sum().item()
+                targetcpu = [l.item() for l in labels.long().cpu()]
+
+                pred_list += [p.item() for p in pred.cpu()]
+                score_list += [s.item() for s in score.cpu()[:,1]]
+                target_list += targetcpu
 
     return target_list, score_list, pred_list, (val_loss / len(val_loader))
 
 
-def test(model, criterion, test_loader):
+def test(model, criterion, test_loader, additional_stats_enabled=False):
     """
     Tests the given model
 
@@ -168,25 +167,28 @@ def test(model, criterion, test_loader):
 
     model, device = move_model_to_device(model)
 
-    vote_num = 100
+    vote_num = len(test_loader) // 10
 
-    test_loss = 0
+    test_loss = 0.
     correct = 0
 
-    # Don't update model
     with torch.no_grad():
-        #same as in validation
+        # see validation returns
         pred_list = []
         target_list = []
         score_list = []
 
-        # Predict
+        stat_vars = OrderedDict()
+        stat_vars["batch_number"] = 1
+        stat_vars["test_loss"] = 0.
+
+        if additional_stats_enabled:
+            additional_stats = ["precision", "recall", "accuracy", "AUC"]
+            for stat in additional_stats: stat_vars[stat] = 0.
+
         progressbar = tqdm(range(len(test_loader)), desc='Testing...')
-        progressbar.set_postfix({"test_loss": 0.,
-                                 "precision": 0.,
-                                 "recall": 0.,
-                                 "accuracy": 0.,
-                                 "AUC": 0.})
+        progressbar.set_postfix(stat_vars)
+
 
         for batch_index, batch_samples in zip(progressbar, test_loader):
             images, labels = batch_samples["img"].to(device), batch_samples["label"].to(device)
@@ -194,24 +196,32 @@ def test(model, criterion, test_loader):
             output = model(images)
 
             test_loss += criterion(output, labels.long())
-            score = F.softmax(output, dim=1)
-            pred = output.argmax(dim=1, keepdim=True)
 
-            correct += pred.eq(labels.long().view_as(pred)).sum().item()
+            if additional_stats_enabled:
+                score = F.softmax(output, dim=1)
+                pred = output.argmax(dim=1, keepdim=True)
 
-            targetcpu = [l.item() for l in labels.long().cpu()]
-            pred_list += [p.item() for p in pred.cpu()]
-            score_list += [s.item() for s in score.cpu()[:,1]]
-            target_list += targetcpu
+                correct += pred.eq(labels.long().view_as(pred)).sum().item()
+                targetcpu = [l.item() for l in labels.long().cpu()]
 
-            if batch_index % vote_num == 99:
-                precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+                pred_list += [p.item() for p in pred.cpu()]
+                score_list += [s.item() for s in score.cpu()[:,1]]
+                target_list += targetcpu
 
-                progressbar.set_postfix({"test_loss": test_loss.item() / batch_index,
-                                         "precision": precision,
-                                         "recall": recall,
-                                         "accuracy": acc,
-                                         "AUC": auc})
+            if (batch_index + 1) % vote_num == 0:
+                if additional_stats_enabled:
+                    precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+                    stat_vars["precision"] = precision
+                    stat_vars["recall"] = recall
+                    stat_vars["accuracy"] = acc
+                    stat_vars["AUC"] = auc
+
+                stat_vars["batch_number"] = batch_index + 1
+                stat_vars["test_loss"] = test_loss.item() / vote_num
+
+                progressbar.set_postfix(stat_vars)
+
+                test_loss = 0.
 
 
 def compute_statistics(pred_list, score_list, target_list):
@@ -232,9 +242,9 @@ def compute_statistics(pred_list, score_list, target_list):
         acc (float): accuracy computed from the given inputs
         auc (float): AUC computed from the given inputs
     """
-    pred_list = np.asarray(pred_list)
-    score_list = np.asarray(score_list)
-    target_list = np.asarray(target_list)
+    pred_list = np.array(pred_list, dtype=np.float32)
+    score_list = np.array(score_list, dtype=np.float32)
+    target_list = np.array(target_list, dtype=np.float32)
 
     TP = ((pred_list == 1) & (target_list == 1)).sum()
     TN = ((pred_list == 0) & (target_list == 0)).sum()
