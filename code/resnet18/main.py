@@ -80,6 +80,9 @@ if __name__ == "__main__":
             param.requires_grad = True
 
     #train ...
+    if not os.path.exists("model_backup/"):
+        os.makedirs("model_backup/")
+        
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     stats_path = "model_backup/stats_resnet18_e{}_bs{}_{}.json".format(NUM_EPOCHS,
                                                                        BATCH_SIZE,
@@ -95,9 +98,6 @@ if __name__ == "__main__":
 
     import sys
     sys.exit()
-
-    if not os.path.exists("model_backup/"):
-        os.makedirs("model_backup/")
 
     torch.save(resnet18.state_dict(),
                "model_backup/resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
