@@ -29,6 +29,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
     model, device = move_model_to_device(model)
 
     vote_num = len(train_loader) // 10
+    vote_num = vote_num if vote_num > 0 else 1
 
     train_loss = 0.
     val_loss = 0.
@@ -174,6 +175,7 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
     model, device = move_model_to_device(model)
 
     vote_num = len(test_loader) // 10
+    vote_num = vote_num if vote_num > 0 else 1
 
     test_loss = 0.
     correct = 0
@@ -293,3 +295,21 @@ def move_model_to_device(model):
     model.to(device)
 
     return model, device
+
+
+# https://www.kaggle.com/bigironsphere/loss-function-library-keras-pytorch
+class DiceLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(DiceLoss, self).__init__()
+
+    def forward(self, inputs, targets, smooth=1):
+        inputs = torch.sigmoid(inputs)
+
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+
+        intersection = (inputs * targets).sum()
+
+        dice = (2.*intersection + smooth)/(inputs.sum() + targets.sum() + smooth)
+
+        return 1 - dice
