@@ -72,6 +72,15 @@ class CovidDataset(Dataset):
         return len(self.img_list)
 
     def __getitem__(self, idx):
+        """
+        Loads and returns a sample from the dataset at the given index idx.
+        If caching is enabled the cached data will be used. Otherwise the data
+        has to be retrieved from the disk.
+
+        Returns:
+            sample (dict): Dictionary with training data ("img") and ground
+                           truth ("label").
+        """
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
@@ -89,6 +98,14 @@ class CovidDataset(Dataset):
             return sample
 
     def get_train_transforms(self, p=0.5):
+        """
+        Creates composed transformation function for training data
+
+        Returns:
+            test_transform (ComposeDouble): Composed function performing
+                                            required transformation for
+                                            training data
+        """
         rotation_transform = RotationTransform(p, angles=[90, 180, 270])
 
         train_transform = transforms.Compose([
@@ -103,6 +120,14 @@ class CovidDataset(Dataset):
         return train_transform
 
     def get_test_transforms(self):
+        """
+        Creates composed transformation function for test/validation data
+
+        Returns:
+            test_transform (ComposeDouble): Composed function performing
+                                            required transformation for
+                                            test/validation data
+        """
         test_transform = transforms.Compose([
             transforms.Resize((256,256)),
             transforms.ToTensor(),
@@ -112,8 +137,13 @@ class CovidDataset(Dataset):
         return test_transform
 
     def cache(self):
+        """
+        Caches data in RAM for faster access during training and testing.
+        Can require a lot of free RAM (depending on the dataset size)!
+        """
         progressbar = tqdm(range(len(self.img_list)), desc="Caching")
         for i, data in zip(progressbar, self.img_list):
             img_path, label = data
             image = Image.open(img_path).convert('RGB')
+
             self.cached_data.append((self.transform(image), label))
