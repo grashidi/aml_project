@@ -82,7 +82,7 @@ if __name__ == "__main__":
     #train ...
     if not os.path.exists("model_backup/"):
         os.makedirs("model_backup/")
-        
+
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     stats_path = "model_backup/stats_resnet18_e{}_bs{}_{}.json".format(NUM_EPOCHS,
                                                                        BATCH_SIZE,
@@ -95,9 +95,6 @@ if __name__ == "__main__":
     fit(resnet18, optimizer, scheduler, criterion, train_loader, val_loader,
         NUM_EPOCHS, stats_path, additional_stats_enabled=True)
     test(resnet18, criterion, test_loader, additional_stats_enabled=True)
-
-    import sys
-    sys.exit()
 
     torch.save(resnet18.state_dict(),
                "model_backup/resnet18_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
