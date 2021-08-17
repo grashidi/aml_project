@@ -86,13 +86,11 @@ class SegmentationDataset(Dataset):
         self.txt_path = [txt_images, txt_masks]
         self.train = train
         self.p = p
-        self.img_list = []
         self.use_cache = use_cache
         self.cached_data = []
+        self.img_list = []
 
-        im_p, ma_p = self.txt_path
-        self.img_list = [[os.path.join(r, "images", im), os.path.join(r, "masks", ma)]
-                          for r in self.root_dir for im, ma in zip(read_txt(r + im_p), read_txt(r + ma_p))]
+        self.get_images()
 
         if train:
             self.transform = self.get_train_transforms(p=self.p)
@@ -289,3 +287,13 @@ class SegmentationDataset(Dataset):
             label = Image.open(label_path).convert('RGB')
 
             self.cached_data.append((self.transform(image, label)))
+
+    def get_images(self):
+        """
+        Collects pairs of images and masks
+        """
+        im_p, ma_p = self.txt_path
+
+        for r in self.root_dir:
+            for im, ma in zip(read_txt(r + im_p), read_txt(r + ma_p)):
+                self.img_list.append([os.path.join(r, "images", im), os.path.join(r, "masks", ma)])
