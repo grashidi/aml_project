@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     USE_CACHE = False
 
-    root_dir = ["../../data/segmentation/"]
+    root_dir = ["../../data/segmentation/xray/", "../../data/segmentation/ct_scan/"]
     txt_images = "data_split/images/"
     txt_masks = "data_split/masks/"
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
     test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
 
-    # check out some of the images
+    # # check out some of the images
     # for batch_index, batch_samples in enumerate(train_loader):
     #     im, labels = batch_samples['img'], batch_samples['label']
     #     plt.figure()
