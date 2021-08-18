@@ -2,9 +2,9 @@
 
 ## Installation
 Clone repository:<br>
-  <u>SSH:</u><br>
+  <ins>SSH:</ins><br>
   ```git clone git@github.com:grashidi/aml_project.git```<br>
-  <u>HTTPS:</u><br>
+  <ins>HTTPS:</ins><br>
     ```git clone https://github.com/grashidi/aml_project.git```<br>
   
 Change into code directory:<br>
