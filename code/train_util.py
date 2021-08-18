@@ -22,9 +22,9 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
         val_loader (data loader class):  Data loader containing validation data.
         epochs (int): Number epochs.
         stats_path (string): Path for writing statistics to file.
-        additional_stats_enabled (bool): If true precision, recall, accuracy, AUC
-                                         are computed and logged. Turn off those
-                                         statistics for unet training!
+        additional_stats_enabled (bool): If true precision, recall, accuracy,
+                                         AUC, F1 are computed and logged.
+                                         Turn off those statistics for unet training!
     """
     model, device = move_model_to_device(model)
 
@@ -45,7 +45,7 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
     stat_vars["val_loss"] = 0.
 
     if additional_stats_enabled:
-        additional_stats = ["precision", "recall", "accuracy", "AUC"]
+        additional_stats = ["precision", "recall", "accuracy", "AUC", "F1"]
         for stat in additional_stats: stat_vars[stat] = 0.
 
     stats_history = {stat: [] for stat in stat_vars.keys()}
@@ -81,11 +81,12 @@ def fit(model, optimizer, scheduler, criterion, train_loader, val_loader,
 
                 val_loss += curr_val_loss
                 if additional_stats_enabled:
-                    precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+                    precision, recall, acc, auc, f1 = compute_statistics(pred_list, score_list, target_list)
                     stat_vars["precision"] = precision
                     stat_vars["recall"] = recall
                     stat_vars["accuracy"] = acc
                     stat_vars["AUC"] = auc
+                    stat_vars["F1"] = f1
 
                 stat_vars["epoch"] = e + 1
                 stat_vars["batch_number"] = batch_index + 1
@@ -166,8 +167,8 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
         model (model class): Model to be trained.
         criterion (loss class): Loss to be used.
         test_loader (data loader class):  Data loader containing test data.
-        additional_stats_enabled (bool): If true precision, recall, accuracy, AUC
-                                         are computed. Turn off those
+        additional_stats_enabled (bool): If true precision, recall, accuracy,
+                                         AUC, F1 are computed. Turn off those
                                          statistics for unet testing!
     """
     model.eval()
@@ -191,7 +192,7 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
         stat_vars["test_loss"] = 0.
 
         if additional_stats_enabled:
-            additional_stats = ["precision", "recall", "accuracy", "AUC"]
+            additional_stats = ["precision", "recall", "accuracy", "AUC", "F1"]
             for stat in additional_stats: stat_vars[stat] = 0.
 
         progressbar = tqdm(range(len(test_loader)), desc='Testing...')
@@ -218,11 +219,12 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
 
             if (batch_index + 1) % vote_num == 0:
                 if additional_stats_enabled:
-                    precision, recall, acc, auc = compute_statistics(pred_list, score_list, target_list)
+                    precision, recall, acc, auc, f1 = compute_statistics(pred_list, score_list, target_list)
                     stat_vars["precision"] = precision
                     stat_vars["recall"] = recall
                     stat_vars["accuracy"] = acc
                     stat_vars["AUC"] = auc
+                    stat_vars["F1"] = f1
 
                 stat_vars["batch_number"] = batch_index + 1
                 stat_vars["test_loss"] = test_loss.item() / vote_num
@@ -249,6 +251,7 @@ def compute_statistics(pred_list, score_list, target_list):
         recall (float): recall computed from the given inputs
         acc (float): accuracy computed from the given inputs
         auc (float): AUC computed from the given inputs
+        f1 (float): F1 score compute from given inputs
     """
     pred_list = np.array(pred_list, dtype=np.float32)
     score_list = np.array(score_list, dtype=np.float32)
@@ -263,8 +266,9 @@ def compute_statistics(pred_list, score_list, target_list):
     recall = (TP / (TP + FN)) if (TP + FN) > 0. else 0.
     acc = (TP + TN) / (TP + TN + FP + FN)
     auc = roc_auc_score(target_list, score_list)
+    f1 = 2 * recall * precision / (recall + precision)
 
-    return precision, recall, acc, auc
+    return precision, recall, acc, auc, f1
 
 
 def move_model_to_device(model):
