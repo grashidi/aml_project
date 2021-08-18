@@ -286,9 +286,9 @@ def move_model_to_device(model):
     device_count = torch.cuda.device_count()
     if device_count > 1:
         print("Devices in use:")
-        for dc in device_count:
+        for dc in range(device_count):
             print(torch.cuda.get_device_name(device=dc))
-        model = nn.DataParallel(model, device_ids=list(range(len(device_count))))
+        model = nn.DataParallel(model, device_ids=list(range(device_count)))
     elif device_count == 1:
         print("Device in use:")
         print(torch.cuda.get_device_name(device=0))
