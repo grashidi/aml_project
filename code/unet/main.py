@@ -6,8 +6,8 @@ from torch.utils.data import  DataLoader
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from datetime import datetime
-from segmentation_dataset import SegmentationDataset
-from train_util import fit, test, DiceLoss
+from util.segmentation_dataset import SegmentationDataset
+from util.train_util import fit, test, DiceLoss
 
 
 if __name__ == "__main__":
