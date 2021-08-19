@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
-# setup.py
+from setuptools import setup
 
-import setuptools
-
-setuptools.setup(name='covid_dataset')
-setuptools.setup(name='segmentation_dataset')
-setuptools.setup(name='train_util')
+setup(name="aml_project_util",
+      packages=["util"])
