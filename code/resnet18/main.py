@@ -6,8 +6,8 @@ from torch.utils.data import  DataLoader
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from datetime import datetime
-from covid_dataset import CovidDataset
-from train_util import fit, test
+from util.covid_dataset import CovidDataset
+from util.train_util import fit, test
 
 
 if __name__ == "__main__":
