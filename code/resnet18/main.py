@@ -22,17 +22,17 @@ if __name__ == "__main__":
     txt_NonCOVID = "data_split/NonCOVID/"
 
     trainset = CovidDataset(root_dir=root_dir,
-                            txt_COVID=txt_COVID + "/train.txt",
-                            txt_NonCOVID=txt_NonCOVID + "/train.txt",
+                            txt_COVID=txt_COVID + "train.txt",
+                            txt_NonCOVID=txt_NonCOVID + "train.txt",
                             train=True,
                             use_cache=USE_CACHE)
     valset = CovidDataset(root_dir=root_dir,
-                          txt_COVID=txt_COVID + "/val.txt",
-                          txt_NonCOVID=txt_NonCOVID + "/val.txt",
+                          txt_COVID=txt_COVID + "val.txt",
+                          txt_NonCOVID=txt_NonCOVID + "val.txt",
                           use_cache=USE_CACHE)
     testset = CovidDataset(root_dir=root_dir,
-                           txt_COVID=txt_COVID + "/test.txt",
-                           txt_NonCOVID=txt_NonCOVID + "/test.txt",
+                           txt_COVID=txt_COVID + "test.txt",
+                           txt_NonCOVID=txt_NonCOVID + "test.txt",
                            use_cache=USE_CACHE)
 
     train_loader = DataLoader(trainset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)

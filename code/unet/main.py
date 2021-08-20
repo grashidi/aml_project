@@ -22,17 +22,17 @@ if __name__ == "__main__":
     txt_masks = "data_split/masks/"
 
     trainset = SegmentationDataset(root_dir=root_dir,
-                                   txt_images=txt_images + "/train.txt",
-                                   txt_masks=txt_masks + "/train.txt",
+                                   txt_images=txt_images + "train.txt",
+                                   txt_masks=txt_masks + "train.txt",
                                    train=True,
                                    use_cache=USE_CACHE)
     valset = SegmentationDataset(root_dir=root_dir,
-                                 txt_images=txt_images + "/val.txt",
-                                 txt_masks=txt_masks + "/val.txt",
+                                 txt_images=txt_images + "val.txt",
+                                 txt_masks=txt_masks + "val.txt",
                                  use_cache=USE_CACHE)
     testset = SegmentationDataset(root_dir=root_dir,
-                                  txt_images=txt_images + "/test.txt",
-                                  txt_masks=txt_masks + "/test.txt",
+                                  txt_images=txt_images + "test.txt",
+                                  txt_masks=txt_masks + "test.txt",
                                   use_cache=USE_CACHE)
 
     train_loader = DataLoader(trainset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
