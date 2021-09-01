@@ -85,13 +85,16 @@ if __name__ == "__main__":
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                      factor=0.5,
                                                      patience=1,
-                                                     verbose=1, mode='min', threshold=0.0001, min_lr=1e-6)
+                                                     verbose=1,
+                                                     mode='min',
+                                                     threshold=0.0001,
+                                                     min_lr=1e-6)
     criterion = DiceLoss()
 
     fit(unet, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
     test(unet, criterion, test_loader)
 
-    torch.save(resnet18.state_dict(),
+    torch.save(unet.state_dict(),
                "model_backup/unet_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
                                                              BATCH_SIZE,
                                                              time))
