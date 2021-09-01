@@ -78,17 +78,18 @@ if __name__ == "__main__":
 
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     stats_path = "model_backup/stats_unet_e{}_bs{}_{}".format(NUM_EPOCHS,
-                                                                     BATCH_SIZE,
-                                                                     time)
+                                                              BATCH_SIZE,
+                                                              time)
 
     optimizer = optim.Adam(unet.parameters(), lr=2e-4)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
-                                                     factor=0.5,
-                                                     patience=1,
-                                                     verbose=1,
                                                      mode='min',
+                                                     factor=0.5,
+                                                     patience=3,
                                                      threshold=0.0001,
-                                                     min_lr=1e-6)
+                                                     cooldown=2,
+                                                     min_lr=1e-6,
+                                                     verbose=1)
     criterion = DiceLoss()
 
     fit(unet, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
@@ -96,5 +97,5 @@ if __name__ == "__main__":
 
     torch.save(unet.state_dict(),
                "model_backup/unet_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
-                                                             BATCH_SIZE,
-                                                             time))
+                                                         BATCH_SIZE,
+                                                         time))
