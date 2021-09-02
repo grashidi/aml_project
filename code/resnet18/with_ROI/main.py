@@ -6,6 +6,7 @@ from torch.utils.data import  DataLoader
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from datetime import datetime
+import segmentation_models_pytorch as smp
 from util.covid_dataset import CovidDataset
 from util.train_util import fit, test
 
@@ -22,8 +23,10 @@ if __name__ == "__main__":
     txt_NonCOVID = "data_split/NonCOVID/"
 
     # load trained unet
-    unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
-        in_channels=3, out_channels=1, init_features=32, pretrained=True)
+    unet = smp.Unet(encoder_name="se_resnext50_32x4d",
+                    encoder_weights="imagenet",
+                    classes=1,
+                    activation=None)
 
     unet.load_state_dict(torch.load("unet_e50_bs16_01-09-2021_12:27:02.pt"))
     unet.eval()
