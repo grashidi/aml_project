@@ -6,6 +6,7 @@ from torch.utils.data import  DataLoader
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from datetime import datetime
+import segmentation_models_pytorch as smp
 from util.segmentation_dataset import SegmentationDataset
 from util.train_util import fit, test, DiceLoss
 
@@ -13,7 +14,7 @@ from util.train_util import fit, test, DiceLoss
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 50
+    NUM_EPOCHS = 5
 
     USE_CACHE = False
 
@@ -69,8 +70,13 @@ if __name__ == "__main__":
     #
     # print(mean, std)
 
-    unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
-        in_channels=3, out_channels=1, init_features=32, pretrained=True)
+    # unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
+    #     in_channels=3, out_channels=1, init_features=32, pretrained=True)
+
+    unet = smp.Unet(encoder_name="se_resnext50_32x4d",
+                    encoder_weights="imagenet",
+                    classes=1,
+                    activation=None)
 
     # train...
     if not os.path.exists("model_backup/"):
