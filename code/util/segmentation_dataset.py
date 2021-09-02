@@ -203,7 +203,7 @@ class SegmentationDataset(Dataset):
 
     def normalize(self, A):
         """
-        Normalize tensor with precomputed mean and std
+        Normalize tensor with precomputed (training dataset) mean and std
 
         Args:
             A (tensor): Tensor to be normalized
