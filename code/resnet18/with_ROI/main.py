@@ -17,13 +17,21 @@ if __name__ == "__main__":
 
     USE_CACHE = False # Make sure you have enough RAM available
 
-    root_dir = ["../../data/ct_scan/", "../../data/xray/"]
+    root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
     txt_COVID = "data_split/COVID/"
     txt_NonCOVID = "data_split/NonCOVID/"
+
+    # load trained unet
+    unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
+        in_channels=3, out_channels=1, init_features=32, pretrained=True)
+
+    unet.load_state_dict(torch.load("unet_model_backup/unet_e50_bs16_01-09-2021_12:27:02.pt"))
+    unet.eval()
 
     trainset = CovidDataset(root_dir=root_dir,
                             txt_COVID=txt_COVID + "train.txt",
                             txt_NonCOVID=txt_NonCOVID + "train.txt",
+                            unet=unet,
                             train=True,
                             use_cache=USE_CACHE)
     valset = CovidDataset(root_dir=root_dir,
@@ -47,6 +55,9 @@ if __name__ == "__main__":
     #
     #     if batch_index > 18:
     #         break
+    #
+    # import sys
+    # sys.exit()
 
     # # compute mean and std for dataset
     # mean = 0.
