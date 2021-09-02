@@ -25,7 +25,7 @@ if __name__ == "__main__":
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         in_channels=3, out_channels=1, init_features=32, pretrained=True)
 
-    unet.load_state_dict(torch.load("unet_model_backup/unet_e50_bs16_01-09-2021_12:27:02.pt"))
+    unet.load_state_dict(torch.load("unet_e50_bs16_01-09-2021_12:27:02.pt"))
     unet.eval()
 
     trainset = CovidDataset(root_dir=root_dir,
