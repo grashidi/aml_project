@@ -143,10 +143,10 @@ class SegmentationDataset(Dataset):
         train_transform = ComposeDouble([
             FunctionWrapperDouble(self.resize, input=True, target=True, dim=(256, 256)),
             FunctionWrapperDouble(self.to_tensor, input=True, target=True),
-            # FunctionWrapperDouble(normalize, input=True, target=True),
+            FunctionWrapperDouble(self.normalize, input=True, target=True),
             AugmentationDouble(self.random_rotate, p=p),
             FunctionWrapperDouble(self.create_binary_label, input=False, target=True),
-            FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False)
+            # FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False)
         ])
 
         return train_transform
@@ -163,9 +163,9 @@ class SegmentationDataset(Dataset):
         test_transform = ComposeDouble([
             FunctionWrapperDouble(self.resize, input=True, target=True, dim=(256, 256)),
             FunctionWrapperDouble(self.to_tensor, input=True, target=True),
-            # FunctionWrapperDouble(normalize, input=True, target=True),
+            FunctionWrapperDouble(self.normalize, input=True, target=True),
             FunctionWrapperDouble(self.create_binary_label, input=False, target=True),
-            FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False)
+            # FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False)
         ])
 
         return test_transform
@@ -246,9 +246,9 @@ class SegmentationDataset(Dataset):
         """
         zero = torch.zeros_like(label, dtype=torch.long)
         one = torch.ones_like(label, dtype=torch.long)
-        mask = torch.where(label != 0, one, zero)
+        mask = torch.where(label >= 0, one, zero)
 
-        return mask[None,0,:,:]
+        return mask[None,0,:,:].long()
 
 
     def random_rotate(self, image, label, p):
