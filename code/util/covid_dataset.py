@@ -16,22 +16,8 @@ def read_txt(txt_path):
     return txt_data
 
 
-class RotationTransform:
-    """Rotate by one of the given angles."""
-
-    def __init__(self, p, angles):
-        self.p = p
-        self.angles = angles
-
-    def __call__(self, x):
-        if self.p < random.random():
-            angle = random.choice(self.angles)
-            x = TF.rotate(x, int(angle))
-        return x
-
-
 class CovidDataset(Dataset):
-    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, train=False, p=0.5, use_cache=False):
+    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, unet=None, train=False, p=0.5, use_cache=False):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -49,19 +35,17 @@ class CovidDataset(Dataset):
         self.num_cls = len(self.classes)
         self.img_list = []
         self.use_cache = use_cache
+        self.p = p
         self.cached_data = []
+        self.unet = unet
 
         for c in range(self.num_cls):
             cls_list = [[os.path.join(r + "images/", self.classes[c], item), c]
                         for r in self.root_dir for item in read_txt(r + self.txt_path[c])]
             self.img_list += cls_list
 
-        # Mean and std are calculated from the train dataset
-        self.normalize = transforms.Normalize(mean=[0.2099, 0.2098, 0.2098],
-                                              std=[0.7148, 0.7148, 0.7148])
-
         if train:
-             self.transform = self.get_train_transforms(p)
+             self.transform = self.get_train_transforms()
         else:
             self.transform = self.get_test_transforms()
 
@@ -97,7 +81,7 @@ class CovidDataset(Dataset):
                       'label': int(self.img_list[idx][1])}
             return sample
 
-    def get_train_transforms(self, p=0.5):
+    def get_train_transforms(self):
         """
         Creates composed transformation function for training data
 
@@ -106,15 +90,15 @@ class CovidDataset(Dataset):
                                             required transformation for
                                             training data
         """
-        rotation_transform = RotationTransform(p, angles=[90, 180, 270])
-
         train_transform = transforms.Compose([
             transforms.Resize((256,256)),
             transforms.ToTensor(),
-            transforms.RandomHorizontalFlip(p),
-            transforms.RandomVerticalFlip(p),
-            rotation_transform,
-            self.normalize
+            transforms.RandomHorizontalFlip(self.p),
+            transforms.RandomVerticalFlip(self.p),
+            self.rotation_transform,
+            self.normalize,
+            # self.normalize_to_range_0_1,
+            self.mask_transform
         ])
 
         return train_transform
@@ -135,6 +119,68 @@ class CovidDataset(Dataset):
         ])
 
         return test_transform
+
+    def rotation_transform(self, x):
+        """
+        Rotate by one of the defined angles with probability p.
+
+        Args:
+            x (tensor): Tensor to be rotated
+
+        Returns:
+            A (tensor): Rotated tensor
+        """
+        angles = [90, 180, 270]
+
+        if self.p < random.random():
+            angle = random.choice(angles)
+            x = TF.rotate(x, int(angle))
+        return x
+
+    def mask_transform(self, x):
+        """
+        Set pixels outside of mask to zero
+
+        Args:
+            x (tensor): Tensor to be masked
+
+        Returns:
+            x (tensor): Masked tensor
+        """
+        if self.unet:
+            mask = self.unet(x[None,:,:,:])
+            x[mask[0,:,:,:].repeat(3,1,1) < 0.3] = 0.
+        return x
+
+    def normalize(self, A):
+        """
+        Normalize tensor with precomputed (training dataset) mean and std
+
+        Args:
+            A (tensor): Tensor to be normalized
+
+        Returns:
+            A (tensor): Normalized tensor
+        """
+        _normalize = transforms.Normalize(mean=[0.2099, 0.2098, 0.2098],
+                                          std=[0.7148, 0.7148, 0.7148])
+
+        return _normalize(A)
+
+    def normalize_to_range_0_1(self, A):
+        """
+        Normalize array to values within range [0, 1]
+
+        Args:
+            A (tensor): Tensor with values in range [0, 255]
+
+        Returns:
+            B (tensor): Tensor with values in range [0, 1]
+        """
+        B = A - A.min()
+        B /= B.max()
+
+        return B
 
     def cache(self):
         """
