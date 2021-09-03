@@ -14,7 +14,7 @@ from util.train_util import fit, test, DiceLoss
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 20
+    NUM_EPOCHS = 10
 
     USE_CACHE = False
 
@@ -88,17 +88,17 @@ if __name__ == "__main__":
                                                               time)
 
     optimizer = optim.Adam(unet.parameters(), lr=2e-5)
-    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
-    #                                                  mode='min',
-    #                                                  factor=0.5,
-    #                                                  patience=3,
-    #                                                  threshold=0.0001,
-    #                                                  cooldown=2,
-    #                                                  min_lr=1e-6,
-    #                                                  verbose=1)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
-                                                     milestones=[3,5,6,7,8,9,10,11,13,15],
-                                                     gamma=0.75)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
+                                                     mode='min',
+                                                     factor=0.5,
+                                                     patience=3,
+                                                     threshold=0.0001,
+                                                     cooldown=2,
+                                                     min_lr=1e-6,
+                                                     verbose=1)
+    # scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+    #                                                  milestones=[3,5,6,7,8,9,10,11,13,15],
+    #                                                  gamma=0.75)
     criterion = DiceLoss()
 
     fit(unet, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
