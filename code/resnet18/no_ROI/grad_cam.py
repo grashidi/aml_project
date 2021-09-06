@@ -114,7 +114,7 @@ for batch_index, batch_samples in tqdm(enumerate(test_loader)):
     y, x =  get_label_and_prediction(labels.item(), model_out)
 
     plt.imshow(images[0,1,:,:].cpu().numpy(), alpha=1.0)
-    plt.imshow(torchvision.transforms.ToPILImage()(grad_cam.cpu()).resize((224, 224),resample=Image.BILINEAR),
+    plt.imshow(torchvision.transforms.ToPILImage()(grad_cam.cpu()).resize((256, 256),resample=Image.BILINEAR),
                cmap='jet', alpha=0.5)
     plt.title("Label: " + y + " / Predicted: " + x)
     plt.savefig(grad_cam_path + "predicted " + x + "_" + str(batch_index)+".png")
