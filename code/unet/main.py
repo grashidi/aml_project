@@ -14,7 +14,7 @@ from util.train_util import fit, test, DiceLoss
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 15
+    NUM_EPOCHS = 50
 
     USE_CACHE = False
 
@@ -98,11 +98,8 @@ if __name__ == "__main__":
                                                      cooldown=2,
                                                      min_lr=1e-6,
                                                      verbose=1)
-    # scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
-    #                                                  milestones=[3,5,6,7,8,9,10,11,13,15],
-    #                                                  gamma=0.75)
+
     criterion = DiceLoss()
-    # criterion = MixedLoss(10.0, 2.0)
 
 
     fit(unet, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
