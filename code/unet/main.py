@@ -14,7 +14,7 @@ from util.train_util import fit, test, DiceLoss
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 50
+    NUM_EPOCHS = 25
 
     USE_CACHE = False
 
