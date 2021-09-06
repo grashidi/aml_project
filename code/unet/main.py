@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 import segmentation_models_pytorch as smp
 from util.segmentation_dataset import SegmentationDataset
-from util.train_util import fit, test, MixedLoss, DiceLoss
+from util.train_util import fit, test, DiceLoss
 
 
 if __name__ == "__main__":
