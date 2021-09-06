@@ -78,7 +78,7 @@ if __name__ == "__main__":
     #                 classes=1,
     #                 activation=None)
 
-    model = smp.Unet('resnet34',  in_channels=3, classes=1)
+    unet = smp.Unet('resnet34',  in_channels=3, classes=1)
 
     # train...
     if not os.path.exists("model_backup/"):
