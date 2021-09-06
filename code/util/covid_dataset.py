@@ -96,8 +96,8 @@ class CovidDataset(Dataset):
             transforms.RandomHorizontalFlip(self.p),
             transforms.RandomVerticalFlip(self.p),
             self.rotation_transform,
-            # self.normalize,
-            self.normalize_to_range_0_1,
+            self.normalize,
+            # self.normalize_to_range_0_1,
             self.mask_transform
         ])
 
@@ -115,8 +115,8 @@ class CovidDataset(Dataset):
         test_transform = transforms.Compose([
             transforms.Resize((256,256)),
             transforms.ToTensor(),
-            self.normalize_to_range_0_1
-            # self.normalize
+            # self.normalize_to_range_0_1
+            self.normalize
         ])
 
         return test_transform
@@ -149,9 +149,10 @@ class CovidDataset(Dataset):
             x (tensor): Masked tensor
         """
         if self.unet:
-            threshold = 0.6
+            threshold = 0.5
             mask = self.unet(x[None,:,:,:])
             mask = self.normalize_to_range_0_1(mask)
+            mask = torch.round(mask)
             zero = torch.zeros_like(mask, dtype=torch.long)
             one = torch.ones_like(mask, dtype=torch.long)
             mask = torch.where(mask >= threshold, one, zero)
