@@ -8,13 +8,13 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 import segmentation_models_pytorch as smp
 from util.segmentation_dataset import SegmentationDataset
-from util.train_util import fit, test, DiceLoss
+from util.train_util import fit, test, MixedLoss, DiceLoss
 
 
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 10
+    NUM_EPOCHS = 50
 
     USE_CACHE = False
 
@@ -73,10 +73,12 @@ if __name__ == "__main__":
     # unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
     #     in_channels=3, out_channels=1, init_features=32, pretrained=True)
 
-    unet = smp.Unet(encoder_name="se_resnext50_32x4d",
-                    encoder_weights="imagenet",
-                    classes=1,
-                    activation=None)
+    # unet = smp.Unet(encoder_name="se_resnext50_32x4d",
+    #                 encoder_weights="imagenet",
+    #                 classes=1,
+    #                 activation=None)
+
+    model = smp.Unet('resnet34',  in_channels=3, classes=1)
 
     # train...
     if not os.path.exists("model_backup/"):
@@ -91,7 +93,7 @@ if __name__ == "__main__":
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                      mode='min',
                                                      factor=0.5,
-                                                     patience=3,
+                                                     patience=1,
                                                      threshold=0.0001,
                                                      cooldown=2,
                                                      min_lr=1e-6,
@@ -100,6 +102,8 @@ if __name__ == "__main__":
     #                                                  milestones=[3,5,6,7,8,9,10,11,13,15],
     #                                                  gamma=0.75)
     criterion = DiceLoss()
+    # criterion = MixedLoss(10.0, 2.0)
+
 
     fit(unet, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
     test(unet, criterion, test_loader)
