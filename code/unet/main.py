@@ -14,7 +14,7 @@ from util.train_util import fit, test, DiceLoss
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 25
+    NUM_EPOCHS = 15
 
     USE_CACHE = False
 
@@ -70,15 +70,15 @@ if __name__ == "__main__":
     #
     # print(mean, std)
 
-    # unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
-    #     in_channels=3, out_channels=1, init_features=32, pretrained=True)
+    unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
+        in_channels=3, out_channels=1, init_features=32, pretrained=True)
 
     # unet = smp.Unet(encoder_name="se_resnext50_32x4d",
     #                 encoder_weights="imagenet",
     #                 classes=1,
     #                 activation=None)
 
-    unet = smp.Unet('resnet34',  in_channels=3, classes=1)
+    # unet = smp.Unet('resnet34',  in_channels=3, classes=1)
 
     # train...
     if not os.path.exists("model_backup/"):
