@@ -70,13 +70,13 @@ if __name__ == "__main__":
     #
     # print(mean, std)
 
-    unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
-        in_channels=3, out_channels=1, init_features=32, pretrained=True)
+    # unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
+    #     in_channels=3, out_channels=1, init_features=32, pretrained=True)
 
-    # unet = smp.Unet(encoder_name="se_resnext50_32x4d",
-    #                 encoder_weights="imagenet",
-    #                 classes=1,
-    #                 activation=None)
+    unet = smp.Unet(encoder_name="se_resnext50_32x4d",
+                    encoder_weights="imagenet",
+                    classes=1,
+                    activation=None)
 
     # unet = smp.Unet('resnet34',  in_channels=3, classes=1)
 
