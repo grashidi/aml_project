@@ -152,11 +152,10 @@ class CovidDataset(Dataset):
             threshold = 0.5
             mask = self.unet(x[None,:,:,:])
             mask = self.normalize_to_range_0_1(mask)
-            mask = torch.round(mask)
             zero = torch.zeros_like(mask, dtype=torch.long)
             one = torch.ones_like(mask, dtype=torch.long)
             mask = torch.where(mask >= threshold, one, zero)
-            x[mask[0,:,:,:].repeat(3,1,1) == 0] = 0.
+            x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x)
         return x
 
     def normalize(self, A):
