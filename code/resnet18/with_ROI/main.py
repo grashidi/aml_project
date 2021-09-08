@@ -16,19 +16,25 @@ if __name__ == "__main__":
     BATCH_SIZE = 10
     NUM_EPOCHS = 10
 
-    USE_CACHE = False # Make sure you have enough RAM available
+    USE_CACHE = True # Make sure you have enough RAM available
 
     root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
     txt_COVID = "data_split/COVID/"
     txt_NonCOVID = "data_split/NonCOVID/"
 
     # load trained unet
-    unet = smp.Unet(encoder_name="se_resnext50_32x4d",
-                    encoder_weights="imagenet",
-                    classes=1,
-                    activation=None)
+    # unet = smp.Unet(encoder_name="se_resnext50_32x4d",
+    #                 encoder_weights="imagenet",
+    #                 classes=1,
+    #                 activation=None)
 
+    unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
+        in_channels=3, out_channels=1, init_features=32, pretrained=True)
     unet.load_state_dict(torch.load("unet_e50_bs16_01-09-2021_12:27:02.pt"))
+
+    # unet = smp.Unet('resnet34',  in_channels=3, classes=1)
+
+    # unet.load_state_dict(torch.load("unet_e50_bs16_07-09-2021_23:41:08.pt"))
     unet.eval()
 
     trainset = CovidDataset(root_dir=root_dir,
@@ -53,8 +59,10 @@ if __name__ == "__main__":
     # # check out some of the images
     # for batch_index, batch_samples in enumerate(train_loader):
     #     im, labels = batch_samples['img'], batch_samples['label']
-    #     plt.imshow(im[0,1,:,:].numpy(), alpha=1.0)
-    #     plt.savefig("test_" + str(batch_index) + ".png")
+    #     plt.figure()
+    #     c1 = plt.imshow(im[0,0,:,:].numpy(), alpha=1.0)
+    #     plt.colorbar(c1)
+    #     plt.savefig("test_" + str(batch_index) + "_im.png")
     #
     #     if batch_index > 18:
     #         break
