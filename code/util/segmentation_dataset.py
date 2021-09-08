@@ -143,8 +143,8 @@ class SegmentationDataset(Dataset):
         train_transform = ComposeDouble([
             FunctionWrapperDouble(self.resize, input=True, target=True, dim=(256, 256)),
             FunctionWrapperDouble(self.to_tensor, input=True, target=True),
-            FunctionWrapperDouble(self.normalize, input=True, target=True),
-            # FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False),
+            # FunctionWrapperDouble(self.normalize, input=True, target=True),
+            FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False),
             AugmentationDouble(self.random_rotate, p=p),
             FunctionWrapperDouble(self.create_binary_label, input=False, target=True)
         ])
@@ -163,8 +163,8 @@ class SegmentationDataset(Dataset):
         test_transform = ComposeDouble([
             FunctionWrapperDouble(self.resize, input=True, target=True, dim=(256, 256)),
             FunctionWrapperDouble(self.to_tensor, input=True, target=True),
-            FunctionWrapperDouble(self.normalize, input=True, target=True),
-            # FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False),
+            # FunctionWrapperDouble(self.normalize, input=True, target=True),
+            FunctionWrapperDouble(self.normalize_to_range_0_1, input=True, target=False),
             FunctionWrapperDouble(self.create_binary_label, input=False, target=True)
         ])
 
