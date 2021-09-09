@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # for batch_index, batch_samples in enumerate(train_loader):
     #     im, labels = batch_samples['img'], batch_samples['label']
     #     plt.figure()
-    #     c1 = plt.imshow(im[0,0,:,:].numpy(), alpha=1.0)
+    #     c1 = plt.imshow(im[0,2,:,:].numpy(), alpha=1.0)
     #     plt.colorbar(c1)
     #     plt.savefig("test_" + str(batch_index) + "_im.png")
     #
