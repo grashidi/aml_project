@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         in_channels=3, out_channels=1, init_features=32, pretrained=True)
-    unet.load_state_dict(torch.load("unet_e50_bs16_01-09-2021_12:27:02.pt"))
+    unet.load_state_dict(torch.load("unet_e10_bs16_09-09-2021_10:17:50.pt"))
 
     # unet = smp.Unet('resnet34',  in_channels=3, classes=1)
 
