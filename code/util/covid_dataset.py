@@ -2,7 +2,7 @@ from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 import os
 import torch
-from PIL import Image
+from PIL import Image, ImageEnhance
 import glob
 from numpy import random
 import torchvision.transforms.functional as TF
@@ -150,6 +150,7 @@ class CovidDataset(Dataset):
         """
         if self.unet:
             threshold = 0.5
+            x = self.normalize_to_range_0_1(x)
             mask = self.unet(x[None,:,:,:])
             mask = self.normalize_to_range_0_1(mask)
             zero = torch.zeros_like(mask, dtype=torch.long)
