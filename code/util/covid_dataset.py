@@ -96,8 +96,8 @@ class CovidDataset(Dataset):
             transforms.RandomHorizontalFlip(self.p),
             transforms.RandomVerticalFlip(self.p),
             self.rotation_transform,
-            self.normalize,
-            # self.normalize_to_range_0_1,
+            # self.normalize,
+            self.normalize_to_range_0_1,
             self.mask_transform
         ])
 
