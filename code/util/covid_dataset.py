@@ -150,15 +150,14 @@ class CovidDataset(Dataset):
         """
         if self.unet:
             threshold = 0.5
-            x = self.normalize_to_range_0_1(x)
+            # x = self.normalize_to_range_0_1(x)
             mask = self.unet(x[None,:,:,:])
             mask = self.normalize_to_range_0_1(mask)
             zero = torch.zeros_like(mask, dtype=torch.long)
             one = torch.ones_like(mask, dtype=torch.long)
             mask = torch.where(mask >= threshold, one, zero)
-            x[-1,:,:] = mask[0,0,:,:]
-            # x = torch.cat((x, mask[0,:,:,:]), 0)
-            # x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x)
+            # x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask
+            x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
         return x
 
     def normalize(self, A):
