@@ -115,8 +115,8 @@ class CovidDataset(Dataset):
         test_transform = transforms.Compose([
             transforms.Resize((256,256)),
             transforms.ToTensor(),
-            # self.normalize_to_range_0_1
-            self.normalize
+            self.normalize_to_range_0_1
+            # self.normalize
         ])
 
         return test_transform
