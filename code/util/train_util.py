@@ -307,8 +307,6 @@ class DiceLoss(nn.Module):
         super(DiceLoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
-        inputs = torch.sigmoid(inputs)
-
         inputs = inputs.view(-1)
         targets = targets.view(-1)
 
