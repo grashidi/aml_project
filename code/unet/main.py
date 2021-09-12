@@ -14,7 +14,7 @@ from util.train_util import fit, test, DiceLoss
 if __name__ == "__main__":
     # adpated from https://www.kaggle.com/nikhilpandey360/lung-segmentation-from-chest-x-ray-dataset
     BATCH_SIZE = 16
-    NUM_EPOCHS = 20
+    NUM_EPOCHS = 10
 
     USE_CACHE = False
 
@@ -73,13 +73,6 @@ if __name__ == "__main__":
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         in_channels=3, out_channels=1, init_features=32, pretrained=True)
 
-    # unet = smp.Unet(encoder_name="se_resnext50_32x4d",
-    #                 encoder_weights="imagenet",
-    #                 classes=1,
-    #                 activation=None)
-
-    # unet = smp.Unet('resnet34',  in_channels=3, classes=1)
-
     # train...
     if not os.path.exists("model_backup/"):
         os.makedirs("model_backup/")
@@ -89,7 +82,7 @@ if __name__ == "__main__":
                                                               BATCH_SIZE,
                                                               time)
 
-    optimizer = optim.Adam(unet.parameters(), lr=2e-5)
+    optimizer = optim.Adam(unet.parameters(), lr=1e-4)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                      mode='min',
                                                      factor=0.5,
