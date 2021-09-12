@@ -65,16 +65,16 @@ if __name__ == "__main__":
     densenet121 = models.densenet121(pretrained=True)
 
     # replace fully connected layer
-    densenet121.fc = nn.Linear(in_features=512, out_features=2, bias=True)
+    densenet121.classifier = nn.Linear(in_features=1024, out_features=2, bias=True)
 
     # freeze all layers
     for param in densenet121.parameters():
         param.requires_grad = True
 
     # unfreeze last three layers
-    #for layer in [densenet121.layer4, densenet121.avgpool, densenet121.fc]:
-    #    for param in layer.parameters():
-    #        param.requires_grad = True
+    for layer in [densenet121.classifier]:
+        for param in layer.parameters():
+            param.requires_grad = True
 
     #train ...
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
