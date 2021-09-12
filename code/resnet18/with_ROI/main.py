@@ -23,18 +23,10 @@ if __name__ == "__main__":
     txt_NonCOVID = "data_split/NonCOVID/"
 
     # load trained unet
-    # unet = smp.Unet(encoder_name="se_resnext50_32x4d",
-    #                 encoder_weights="imagenet",
-    #                 classes=1,
-    #                 activation=None)
-
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         in_channels=3, out_channels=1, init_features=32, pretrained=True)
     unet.load_state_dict(torch.load("unet_e10_bs16_09-09-2021_10:17:50.pt"))
 
-    # unet = smp.Unet('resnet34',  in_channels=3, classes=1)
-
-    # unet.load_state_dict(torch.load("unet_e50_bs16_07-09-2021_23:41:08.pt"))
     unet.eval()
 
     trainset = CovidDataset(root_dir=root_dir,
