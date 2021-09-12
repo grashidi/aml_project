@@ -86,7 +86,7 @@ resnet18.load_state_dict(torch.load(model_path))
 
 # register hooks in las convolutional layer
 resnet18.layer4.register_forward_hook(get_activations("layer4"))
-resnet18.layer4.register_backward_hook(get_grads("layer4"))
+resnet18.layer4.register_full_backward_hook(get_grads("layer4"))
 
 resnet18.eval()
 resnet18.to(device)
