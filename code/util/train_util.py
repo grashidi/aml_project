@@ -159,7 +159,7 @@ def validate(model, criterion, val_loader, device, additional_stats_enabled):
     return target_list, score_list, pred_list, (val_loss / len(val_loader))
 
 
-def test(model, criterion, test_loader, additional_stats_enabled=False):
+def test(model, criterion, test_loader, stats_path=None, additional_stats_enabled=False):
     """
     Tests the given model
 
@@ -195,6 +195,8 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
             additional_stats = ["precision", "recall", "accuracy", "AUC", "F1"]
             for stat in additional_stats: stat_vars[stat] = 0.
 
+        stats_history = {stat: [] for stat in stat_vars.keys()}
+
         progressbar = tqdm(range(len(test_loader)), desc='Testing...')
         progressbar.set_postfix(stat_vars)
 
@@ -229,9 +231,15 @@ def test(model, criterion, test_loader, additional_stats_enabled=False):
                 stat_vars["batch_number"] = batch_index + 1
                 stat_vars["test_loss"] = test_loss.item() / vote_num
 
+                for stat, val in stat_vars.items(): stats_history[stat].append(val)
+
                 progressbar.set_postfix(stat_vars)
 
                 test_loss = 0.
+
+        if stats_path:
+            with open(stats_path, "w") as f:
+                json.dump(stats_history, f)
 
 
 def compute_statistics(pred_list, score_list, target_list):
