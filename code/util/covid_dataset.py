@@ -156,8 +156,8 @@ class CovidDataset(Dataset):
             zero = torch.zeros_like(mask, dtype=torch.long)
             one = torch.ones_like(mask, dtype=torch.long)
             mask = torch.where(mask >= threshold, one, zero)
-            # x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask
-            x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
+            x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask
+            # x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
         return x
 
     def normalize(self, A):
