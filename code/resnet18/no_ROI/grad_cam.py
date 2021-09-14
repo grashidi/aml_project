@@ -5,9 +5,9 @@ import torchvision
 import torchvision.models as models
 from PIL import Image
 from matplotlib import pyplot as plt
-from torch.utils.data import  DataLoader
+from torch.utils.data import DataLoader
 from tqdm import tqdm
-from covid_dataset import CovidDataset
+from util.covid_dataset import CovidDataset
 
 
 def get_label_and_prediction(label, model_out):
@@ -62,10 +62,10 @@ BATCH_SIZE = 1
 
 device = "cuda"
 
-model_name = "resnet18_e10_bs10_08-08-2021_17:33:46.pt"
+model_name = "resnet18_e10_bs10_12-09-2021_10:46:17.pt"
 model_path = "model_backup/" + model_name
 
-root_dir = ["../../data/ct_scan/", "../../data/xray/"]
+root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
 txt_COVID = "data_split/COVID/"
 txt_NonCOVID = "data_split/NonCOVID/"
 
