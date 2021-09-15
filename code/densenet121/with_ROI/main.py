@@ -82,7 +82,7 @@ if __name__ == "__main__":
     densenet121 = models.densenet121(pretrained=True)
 
     # replace fully connected layer
-    densenet121.classifier = nn.Linear(in_features=512, out_features=2, bias=True)
+    densenet121.classifier = nn.Linear(in_features=1024, out_features=2, bias=True)
 
     # freeze all layers
     for param in densenet121.parameters():
