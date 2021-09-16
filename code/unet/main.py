@@ -78,7 +78,7 @@ if __name__ == "__main__":
         os.makedirs("model_backup/")
 
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
-    stats_path = "model_backup/stats_unet_e{}_bs{}_{}".format(NUM_EPOCHS,
+    stats_path = "model_backup/stats_unet_e{}_bs{}_{}.json".format(NUM_EPOCHS,
                                                               BATCH_SIZE,
                                                               time)
 
