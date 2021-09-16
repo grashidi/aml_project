@@ -62,7 +62,7 @@ BATCH_SIZE = 1
 
 device = "cuda"
 
-model_name = "resnet18_e10_bs10_10-09-2021_18:41:22_overlay_mask.pt"
+model_name = "resnet18_e10_bs10_10-09-2021_16:01:50_replaced.pt"
 model_path = "model_backup/" + model_name
 
 root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
