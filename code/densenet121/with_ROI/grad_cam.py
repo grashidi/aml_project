@@ -62,7 +62,7 @@ BATCH_SIZE = 1
 
 device = "cuda"
 
-model_name = "densenet121_e10_bs10_12-09-2021_14:28:55.pt"
+model_name = "densenet121_e10_bs10_15-09-2021_12:20:45.pt"
 model_path = "model_backup/" + model_name
 
 root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
@@ -86,7 +86,7 @@ densenet121.load_state_dict(torch.load(model_path))
 
 # register hooks in las convolutional layer
 densenet121.features.denseblock4.denselayer16.register_forward_hook(get_activations("features.denseblock4.denselayer16"))
-densenet121.features.denseblock4.denselayer16.register_backward_hook(get_grads("features.denseblock4.denselayer16"))
+densenet121.features.denseblock4.denselayer16.register_full_backward_hook(get_grads("features.denseblock4.denselayer16"))
 
 densenet121.eval()
 densenet121.to(device)

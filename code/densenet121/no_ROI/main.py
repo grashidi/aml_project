@@ -72,7 +72,7 @@ if __name__ == "__main__":
         param.requires_grad = True
 
     # unfreeze last three layers
-    for layer in [densenet121.classifier]:
+    for layer in [densenet121.features.denseblock4.denselayer16]:
         for param in layer.parameters():
             param.requires_grad = True
 
