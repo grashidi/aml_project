@@ -75,10 +75,11 @@ you will have to provide the test function in the main.py file with a test stast
 ```test(resnet18, criterion, test_loader, "some_test_statistics_file_path", additional_stats_enabled=True)```<br><br>
 
 #### Grad-CAM investigation
-If you want to conduct the Grad-CAM investigation change into the directory of  the corresponding model e.g.:<br>
-```cd restnet18/no_ROI/```<br><br>
+If you want to conduct the Grad-CAM investigation change into the directory of the corresponding model e.g.:<br>
+```cd restnet18/no_ROI```<br><br>
+
 Make sure that correct model given is given to the Grad-CAM algorithm in the grad_cam.py file e.g.:<br>
-```model_name = "resnet18_e10_bs10_12-09-2021_10:46:17.pt"<br><br>
+```model_name = "resnet18_e10_bs10_12-09-2021_10:46:17.pt"```<br><br>
 
 Then run the grad_cam.py file.<br>
 ```python grad_cam.py```<br><br>
