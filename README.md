@@ -22,7 +22,11 @@ To activate the virtual environment run<br>
   
 ## Data
 The tree structure below presents the data folder's different subfolders.<br>
-<b>ct_scan</b>:
+<b>ct_scan</b>: Contains the CT-scans and the corresponding data split for DenseNet121 and ResNet18.<br>
+<b>x-ray</b>: Contains the x-ray images and the corresponding data split for DenseNet121 and ResNet18.<br>
+<b>segmentation</b>: Contains the x-ray images, CT-scans and the corresponding data split for UNet.<br>
+<b>data_split</b>: Contains three text files with image names assigned to training, validation and testing.<br>
+<b>images</b>: Contains the actual images.<br>
 ```
 ├── ct_scan
 │   ├── data_split
