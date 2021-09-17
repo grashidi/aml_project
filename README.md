@@ -58,11 +58,11 @@ The tree structure below presents the data folder's different subfolders.<br>
  ```
  
 ## Running the code
-#### ResNe18
+#### ResNet18
 Change into resnet18 directory<br>
 ```cd code/resnet18```<br>
 Now you have to options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
-For training without ROI mask application change into the <b>no_ROI<b/> directory and run the main.py file.<br>
+For training without ROI mask application change into the <b>no_ROI</b> directory and run the main.py file.<br>
 ```cd no_ROI```<br>
 ```python main.py```<br><br>
 
