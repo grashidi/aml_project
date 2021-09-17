@@ -150,7 +150,6 @@ class CovidDataset(Dataset):
         """
         if self.unet:
             threshold = 0.5
-            # x = self.normalize_to_range_0_1(x)
             mask = self.unet(x[None,:,:,:])
             mask = self.normalize_to_range_0_1(mask)
             zero = torch.zeros_like(mask, dtype=torch.long)
