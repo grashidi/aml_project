@@ -64,7 +64,7 @@ Change into resnet18 directory<br>
 Now you have to options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
 For training without ROI mask application change into the <b>no_ROI</b> directory and run the main.py file.<br>
 ```cd no_ROI```<br>
-```python main.py```<br><br
+```python main.py```<br><br>
 
   For training with ROI_mask application change into the <b>with_ROI</b> directory and run the main.py file<br><br>
 ```cd with_ROI```<br>
