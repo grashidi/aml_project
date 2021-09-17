@@ -89,7 +89,8 @@ if __name__ == "__main__":
         param.requires_grad = False
 
     # unfreeze last dense layer
-    for layer in [densenet121.features.denseblock4.denselayer16]:
+    denseblock4 = densenet121.features.denseblock4.denselayer16
+    for layer in [denseblock4.norm2,denseblock4.relu2,denseblock4.conv2]:        
         for param in layer.parameters():
             param.requires_grad = True
 
