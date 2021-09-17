@@ -56,5 +56,49 @@ The tree structure below presents the data folder's different subfolders.<br>
         ├── COVID
         └── NonCOVID
  ```
+ 
+## Running the code
+#### ResNe18
+Change into resnet18 directory<br>
+```cd code/resnet18```<br>
+Now you have to options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
+For training without ROI mask application change into the <b>no_ROI</> directory and run the main.py file.<br>
+```cd no_ROI```<br>
+```python main.py```<br><br>
+
+For training with ROI_mask application change into the with_ROI directory and run the main.py file<br><br>
+```cd with_ROI```<br>
+```python main.py```<br><br>
+
+To change the ROI application method open the code/util/covid_dataset.py file. Then go the mask_transform method in line 141.<br><br>
+
+```
+def mask_transform(self, x):
+        """
+        Set pixels outside of mask to zero
+
+        Args:
+            x (tensor): Tensor to be masked
+
+        Returns:
+            x (tensor): Masked tensor
+        """
+        if self.unet:
+            threshold = 0.5
+            mask = self.unet(x[None,:,:,:])
+            mask = self.normalize_to_range_0_1(mask)
+            zero = torch.zeros_like(mask, dtype=torch.long)
+            one = torch.ones_like(mask, dtype=torch.long)
+            mask = torch.where(mask >= threshold, one, zero)
+            x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask
+            # x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
+        return x
+```<br>
+In version above the input image's last channel will be replace with ROI mask. If you want to apply the ROI mask overlay method which sets all pixels located outside of the mask to the minimum value of all pixels just comment out this line of code:<br>
+```# x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask```<br><br>
+And activate the line of code below:<br><br>
+```x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value```<br><br>
+
+ 
 
   
