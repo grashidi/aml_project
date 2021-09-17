@@ -21,6 +21,8 @@ To activate the virtual environment run<br>
   ```source env/bin/activate```<br>
   
 ## Data
+The tree structure below presents the data folder's different subfolders.<br>
+<b>ct_scan</b>:
 ```
 ├── ct_scan
 │   ├── data_split
