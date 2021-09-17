@@ -64,11 +64,27 @@ Change into resnet18 directory<br>
 Now you have to options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
 For training without ROI mask application change into the <b>no_ROI</b> directory and run the main.py file.<br>
 ```cd no_ROI```<br>
-```python main.py```<br><br>
+```python main.py```<br><br
 
   For training with ROI_mask application change into the <b>with_ROI</b> directory and run the main.py file<br><br>
 ```cd with_ROI```<br>
 ```python main.py```<br><br>
+
+A model_backup folder will be created storing the trained model and the training statisics. If you also want to save the test statistics
+you will have to provide the test function in the main.py file with a test stastics file path e.g.:<br>
+```test(resnet18, criterion, test_loader, "some_test_statistics_file_path", additional_stats_enabled=True)```<br><br>
+
+#### Grad-CAM investigation
+If you want to conduct the Grad-CAM investigation change into the directory of  the corresponding model e.g.:<br>
+```cd restnet18/no_ROI/```<br><br>
+Make sure that correct model given is given to the Grad-CAM algorithm in the grad_cam.py file e.g.:<br>
+```model_name = "resnet18_e10_bs10_12-09-2021_10:46:17.pt"<br><br>
+
+Then run the grad_cam.py file.<br>
+```python grad_cam.py```<br><br>
+
+This will create a grad_cam folder with subfolder of the particular grad_cam run storing the created grad_cam images with the heat map overlay.<br>
+The images' labels and the model's prediction will be indicated in the created images.<br>
   
 #### ROI mask channel replacement or ROI mask overlay
 To change the ROI application method open the code/util/covid_dataset.py file. Then go the mask_transform method in line 141.<br><br>
@@ -99,7 +115,3 @@ In the version above the input image's last channel will be replace with the ROI
 ```# x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask```<br><br>
 And activate the line of code below:<br>
 ```x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value```<br><br>
-
- 
-
-  
