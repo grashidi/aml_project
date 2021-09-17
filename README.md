@@ -20,3 +20,33 @@ The installation script creates a virtual environment and installs all packages 
 To activate the virtual environment run<br>
   ```source env/bin/activate```<br>
   
+## Data
+├── ct_scan
+│   ├── data_split
+│   │   ├── COVID
+│   │   └── NonCOVID
+│   └── images
+│       ├── COVID
+│       └── NonCOVID
+├── segmentation
+│   ├── ct_scan
+│   │   ├── data_split
+│   │   │   ├── images
+│   │   │   └── masks
+│   │   ├── images
+│   │   └── masks
+│   └── xray
+│       ├── data_split
+│       │   ├── images
+│       │   └── masks
+│       ├── images
+│       └── masks
+└── xray
+    ├── data_split
+    │   ├── COVID
+    │   └── NonCOVID
+    └── images
+        ├── COVID
+        └── NonCOVID
+
+  
