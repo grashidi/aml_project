@@ -66,7 +66,7 @@ For training without ROI mask application change into the <b>no_ROI</b> director
 ```cd no_ROI```<br>
 ```python main.py```<br><br>
 
-  For training with ROI_mask application change into the <b>with_ROI</b> directory and run the main.py file<br><br>
+  For training with ROI_mask application change into the <b>with_ROI</b> directory and run the main.py file<br>
 ```cd with_ROI```<br>
 ```python main.py```<br><br>
 
