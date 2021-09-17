@@ -9,12 +9,15 @@ from datetime import datetime
 from util.covid_dataset import CovidDataset
 from util.train_util import fit, test
 
+
 if __name__ == "__main__":
+    # Adpated from Deep CNN models for predicting COVID-19 in CT and x-ray images
     BATCH_SIZE = 10 # adapted from paper
     NUM_EPOCHS = 10 # adapted from paper
+    
     USE_CACHE = False # Make sure you have enough RAM available
 
-    root_dir = ["data/ct_scan/", "data/xray/"]
+    root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
     txt_COVID = "data_split/COVID/"
     txt_NonCOVID = "data_split/NonCOVID/"
 
@@ -66,31 +69,32 @@ if __name__ == "__main__":
 
     # replace fully connected layer
     densenet121.classifier = nn.Linear(in_features=1024, out_features=2, bias=True)
-
+    
     # freeze all layers
     for param in densenet121.parameters():
-        param.requires_grad = True
+        param.requires_grad = False
 
-    # unfreeze last three layers
-    for layer in [densenet121.features.denseblock4.denselayer16]:
+    # unfreeze last three layers of last block
+    denseblock4 = densenet121.features.denseblock4.denselayer16
+    for layer in [denseblock4.norm2,denseblock4.relu2,denseblock4.conv2]:
         for param in layer.parameters():
             param.requires_grad = True
 
+    if not os.path.exists("model_backup/"):
+        os.makedirs("model_backup/")
+        
     #train ...
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
-    stats_path = "model_backup/stats_densenet121_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
+    stats_path = "model_backup/stats_densenet121_e{}_bs{}_{}.json".format(NUM_EPOCHS,
                                                                      BATCH_SIZE,
                                                                      time)
-
     optimizer = optim.Adam(densenet121.parameters())
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=1)
     criterion = nn.CrossEntropyLoss()
 
-    fit(densenet121, optimizer, scheduler, criterion, train_loader, val_loader, NUM_EPOCHS, stats_path)
-    test(densenet121, criterion, test_loader)
-
-    if not os.path.exists("model_backup/"):
-        os.makedirs("model_backup/")
+    fit(densenet121, optimizer, scheduler, criterion, train_loader, val_loader,
+        NUM_EPOCHS, stats_path, additional_stats_enabled=True)
+    test(densenet121, criterion, test_loader, additional_stats_enabled=True)
 
     torch.save(densenet121.state_dict(),
                "model_backup/densenet121_e{}_bs{}_{}.pt".format(NUM_EPOCHS,
