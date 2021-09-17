@@ -76,16 +76,16 @@ you will have to provide the test function in the main.py file with a test stast
 
 #### Grad-CAM investigation
 If you want to conduct the Grad-CAM investigation change into the directory of the corresponding model e.g.:<br>
-```cd restnet18/no_ROI```<br><br>
+```cd resnet18/no_ROI```<br><br>
 
-Make sure that correct model given is given to the Grad-CAM algorithm in the grad_cam.py file e.g.:<br>
+Make sure that the correct model is given to the Grad-CAM algorithm in the grad_cam.py file e.g.:<br>
 ```model_name = "resnet18_e10_bs10_12-09-2021_10:46:17.pt"```<br><br>
 
 Then run the grad_cam.py file.<br>
 ```python grad_cam.py```<br><br>
 
-This will create a grad_cam folder with subfolder of the particular grad_cam run storing the created grad_cam images with the heat map overlay.<br>
-The images' labels and the model's prediction will be indicated in the created images.<br>
+This will create a grad_cam folder with a subfolder of the particular grad_cam run, storing the created grad_cam images with the heat map overlay.<br>
+The images' labels and the model's predictions will be indicated in the created images.<br>
   
 #### ROI mask channel replacement or ROI mask overlay
 To change the ROI application method open the code/util/covid_dataset.py file. Then go the mask_transform method in line 141.<br><br>
