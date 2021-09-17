@@ -95,7 +95,7 @@ def mask_transform(self, x):
             # x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
         return x
 ```
-In version above the input image's last channel will be replace with ROI mask. If you want to apply the ROI mask overlay method which sets all pixels located outside of the mask to the minimum value of all pixels just comment out this line of code:<br>
+In the version above the input image's last channel will be replace with the ROI mask. If you want to apply the ROI mask overlay method which sets all pixels located outside of the mask to the minimum value of all pixels just comment out this line of code:<br><br>
 ```# x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask```<br><br>
 And activate the line of code below:<br><br>
 ```x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value```<br><br>
