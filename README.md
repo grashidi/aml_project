@@ -21,6 +21,7 @@ To activate the virtual environment run<br>
   ```source env/bin/activate```<br>
   
 ## Data
+```
 ├── ct_scan
 │   ├── data_split
 │   │   ├── COVID
@@ -48,5 +49,6 @@ To activate the virtual environment run<br>
     └── images
         ├── COVID
         └── NonCOVID
+ ```
 
   
