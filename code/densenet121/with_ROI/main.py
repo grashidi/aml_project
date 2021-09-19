@@ -18,14 +18,14 @@ if __name__ == "__main__":
 
     USE_CACHE = True # Make sure you have enough RAM available
 
-    root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
+    root_dir = ["../../data/ct_scan/", "../../data/xray/"]
     txt_COVID = "data_split/COVID/"
     txt_NonCOVID = "data_split/NonCOVID/"
 
     # load trained unet
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         in_channels=3, out_channels=1, init_features=32, pretrained=True)
-    unet.load_state_dict(torch.load("unet_e10_bs16_09-09-2021_10:17:50.pt"))
+    unet.load_state_dict(torch.load("with_ROI/unet_e10_bs16_09-09-2021_10:17:50.pt"))
 
     unet.eval()
 
@@ -88,15 +88,15 @@ if __name__ == "__main__":
     for param in densenet121.parameters():
         param.requires_grad = False
 
-    # unfreeze last dense layer
-    denseblock4 = densenet121.features.denseblock4.denselayer16
-    for layer in [denseblock4.norm2,denseblock4.relu2,denseblock4.conv2]:        
+    # unfreeze last three layers of last block
+    denseblock4 = densenet121.features.denseblock4
+    for layer in [denseblock4.denselayer14,denseblock4.denselayer15,denseblock4.denselayer16]:
         for param in layer.parameters():
             param.requires_grad = True
 
     #train ...
-    if not os.path.exists("model_backup/"):
-        os.makedirs("model_backup/")
+    if not os.path.exists("with_ROI/model_backup/"):
+        os.makedirs("with_ROI/model_backup/")
 
     time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     stats_path = "model_backup/stats_densenet121_e{}_bs{}_{}.json".format(NUM_EPOCHS,

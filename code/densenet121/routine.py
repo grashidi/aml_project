@@ -5,12 +5,29 @@ flag = ["no_ROI","with_ROI"]
 model_training = [name + "/main.py" for name in flag]
 grad_cam = [name + "/grad_cam.py" for name in flag]
 
-# models traning
-for train in model_training:
-    print(datetime.now(tz=None))
-    os.system("python" + train)
+switch = input("Computation Mode (Train, Grad-CAM, Full): ")
 
-# grad cam computation
-for img in grad_cam:
-    print(datetime.now(tz=None))
-    os.system("python" + img)
+def densenet():
+    for train in model_training:
+        print(str(train))
+        print(datetime.now(tz=None))
+        os.system("python " + train)
+
+def cam():
+    for img in grad_cam:
+        print(str(img))
+        print(datetime.now(tz=None))
+        os.system("python " + img)
+
+if switch == "Train":
+    print("MODE: Training")
+    densenet()
+elif switch == "Grad-CAM":
+    print("MODE: Grad-CAM")
+    cam()
+elif switch == "Full":
+    print("MODE: Full")
+    densenet()
+    cam()       
+else:
+    print("Script Terminated")
