@@ -8,7 +8,7 @@ from datetime import datetime
 import segmentation_models_pytorch as smp
 from util.covid_dataset import CovidDataset
 from util.train_util import fit, test
-from util.check_out_images import check_out_images
+from util.check_out_images import check_out_images_resnet
 
 
 if __name__ == "__main__":
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
 
     # # plot some of the images of the dataset
-    # check_out_images(train_loader)
+    # check_out_images_resnet(train_loader, num_images=20)
 
     # load model pretrained on ImageNet
     resnet18 = models.resnet18(pretrained=True)
