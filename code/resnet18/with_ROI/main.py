@@ -7,7 +7,7 @@ import torch.optim as optim
 from datetime import datetime
 import segmentation_models_pytorch as smp
 from util.covid_dataset import CovidDataset
-from util.train_util import fit, test
+from util.train_util import fit, test, compute_mean_std
 from util.check_out_images import check_out_images_resnet
 
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
     BATCH_SIZE = 10
     NUM_EPOCHS = 10
 
-    USE_CACHE = True # Make sure you have enough RAM available
+    USE_CACHE = False # Make sure you have enough RAM available
 
     root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
     txt_COVID = "data_split/COVID/"
@@ -50,6 +50,9 @@ if __name__ == "__main__":
 
     # # plot some of the images of the dataset
     # check_out_images_resnet(train_loader, num_images=20)
+
+    # compute dataset's mean and std
+    # print(compute_mean_std(train_loader))
 
     # load model pretrained on ImageNet
     resnet18 = models.resnet18(pretrained=True)
