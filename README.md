@@ -89,15 +89,16 @@ This will create a grad_cam folder with a subfolder of the particular grad_cam r
 The images' labels and the model's predictions will be indicated in the created images.<br>
   
 #### ROI mask channel replacement or ROI mask overlay
-You can control the ROI mask application method the CovidDatset's overlay parameter.<br>
+You can control the ROI mask application method with the CovidDatset's overlay parameter.<br>
 If you set the overlay parameter to <b>True</b> the ROI mask overlay will be applied e.g.:<br>
 
-```CovidDataset(root_dir=root_dir,
-                txt_COVID=txt_COVID + "train.txt",
-                txt_NonCOVID=txt_NonCOVID + "train.txt",
-                train=True,
-                unet=unet,
-                overlay=True,
-                use_cache=USE_CACHE)
+```
+CovidDataset(root_dir=root_dir,
+             txt_COVID=txt_COVID + "train.txt",
+             txt_NonCOVID=txt_NonCOVID + "train.txt",
+             train=True,
+             unet=unet,
+             overlay=True,
+             use_cache=USE_CACHE)
   ```
- Otherwise input image's last channel will be replaced with the ROI mask. The default value is set to <b>False</b>
+ Otherwise input image's last channel will be replaced with the ROI mask. The default value is set to <b>False</b>.
