@@ -44,6 +44,7 @@ if __name__ == "__main__":
     # # check out some of the images
     # check_out_images_unet(train_loader, num_images=5)
 
+    # # compute dataset's mean and std
     # print(compute_mean_std(train_loader))
 
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
