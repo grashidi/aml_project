@@ -8,7 +8,8 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 import segmentation_models_pytorch as smp
 from util.segmentation_dataset import SegmentationDataset
-from util.train_util import fit, test, DiceLoss
+from util.train_util import fit, test, DiceLoss, compute_mean_std
+from util.check_out_images import check_out_images_unet
 
 
 if __name__ == "__main__":
@@ -41,34 +42,9 @@ if __name__ == "__main__":
     test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
 
     # # check out some of the images
-    # for batch_index, batch_samples in enumerate(train_loader):
-    #     im, labels = batch_samples['img'], batch_samples['label']
-    #     plt.figure()
-    #     c1 = plt.imshow(im[0,1,:,:].numpy(), alpha=1.0)
-    #     plt.colorbar(c1)
-    #     plt.savefig("test_" + str(batch_index) + "_im.png")
-    #     plt.figure()
-    #     c2 = plt.imshow(labels[0,0,:,:].numpy(), alpha=1.0)
-    #     plt.colorbar(c2)
-    #     plt.savefig("test_" + str(batch_index) + "_label.png")
-    #
-    #     if batch_index > 3:
-    #         break
+    # check_out_images_unet(train_loader, num_images=5)
 
-    # # compute mean and std for dataset
-    # mean = 0.
-    # std = 0.
-    # for batch_samples in train_loader:
-    #     images, labels = batch_samples['img'], batch_samples['label']
-    #     samples = images.size(0) # batch size (the last batch can have smaller size!)
-    #     images = images.view(samples, images.size(1), -1)
-    #     mean += images.mean(2).sum(0)
-    #     std += images.std(2).sum(0)
-    #
-    # mean /= len(train_loader.dataset)
-    # std /= len(train_loader.dataset)
-    #
-    # print(mean, std)
+    # print(compute_mean_std(train_loader))
 
     unet = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         in_channels=3, out_channels=1, init_features=32, pretrained=True)
