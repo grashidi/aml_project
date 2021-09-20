@@ -62,12 +62,12 @@ BATCH_SIZE = 1
 
 device = "cuda"
 
-model_name = "densenet121_e10_bs10_15-09-2021_12:20:45.pt"
-model_path = "model_backup/" + model_name
+model_name = "densenet121_e10_bs10_19-09-2021_10:44:39.pt"
+model_path = "with_ROI/model_backup/" + model_name
 
-root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
-txt_COVID = "data_split/COVID/"
-txt_NonCOVID = "data_split/NonCOVID/"
+root_dir = ["../../data/ct_scan/", "../../data/xray/"]
+txt_COVID = "data_split/COVID"
+txt_NonCOVID = "data_split/NonCOVID"
 
 grad_cam_path = 'grad_cam/' + "_sum_" + model_path.split('/')[1][:-3]+'/'
 if not os.path.exists(grad_cam_path):
