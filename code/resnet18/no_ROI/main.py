@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 from util.covid_dataset import CovidDataset
 from util.train_util import fit, test
+from util.check_out_images import check_out_images_resnet
 
 
 if __name__ == "__main__":
@@ -39,30 +40,8 @@ if __name__ == "__main__":
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
     test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
 
-    # # check out some of the images
-    # for batch_index, batch_samples in enumerate(train_loader):
-    #     im, labels = batch_samples['img'], batch_samples['label']
-    #     plt.imshow(im[0,1,:,:].numpy(), alpha=1.0)
-    #     plt.savefig("test_" + str(batch_index) + ".png")
-    #
-    #     if batch_index > 18:
-    #         break
-
-    # # compute mean and std for dataset
-    # mean = 0.
-    # std = 0.
-    # for batch_samples in train_loader:
-    #     images, labels = batch_samples['img'], batch_samples['label']
-    #     samples = images.size(0) # batch size (the last batch can have smaller size!)
-    #     images = images.view(samples, images.size(1), -1)
-    #     mean += images.mean(2).sum(0)
-    #     std += images.std(2).sum(0)
-    #
-    # mean /= len(train_loader.dataset)
-    # std /= len(train_loader.dataset)
-    #
-    # print(mean, std)
-
+    # # plot some of the images of the dataset
+    # check_out_images_resnet(train_loader, num_images=20)
 
     # load model pretrained on ImageNet
     resnet18 = models.resnet18(pretrained=True)
