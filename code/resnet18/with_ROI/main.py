@@ -4,11 +4,11 @@ import torchvision.models as models
 import torch.nn as nn
 from torch.utils.data import  DataLoader
 import torch.optim as optim
-from matplotlib import pyplot as plt
 from datetime import datetime
 import segmentation_models_pytorch as smp
 from util.covid_dataset import CovidDataset
 from util.train_util import fit, test
+from util.check_out_images import check_out_images
 
 
 if __name__ == "__main__":
@@ -48,35 +48,8 @@ if __name__ == "__main__":
     val_loader = DataLoader(valset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
     test_loader = DataLoader(testset, batch_size=BATCH_SIZE, drop_last=False, shuffle=True)
 
-    # # check out some of the images
-    # for batch_index, batch_samples in enumerate(train_loader):
-    #     im, labels = batch_samples['img'], batch_samples['label']
-    #     plt.figure()
-    #     c1 = plt.imshow(im[0,2,:,:].numpy(), alpha=1.0)
-    #     plt.colorbar(c1)
-    #     plt.savefig("test_" + str(batch_index) + "_im.png")
-    #
-    #     if batch_index > 18:
-    #         break
-    #
-    # import sys
-    # sys.exit()
-
-    # # compute mean and std for dataset
-    # mean = 0.
-    # std = 0.
-    # for batch_samples in train_loader:
-    #     images, labels = batch_samples['img'], batch_samples['label']
-    #     samples = images.size(0) # batch size (the last batch can have smaller size!)
-    #     images = images.view(samples, images.size(1), -1)
-    #     mean += images.mean(2).sum(0)
-    #     std += images.std(2).sum(0)
-    #
-    # mean /= len(train_loader.dataset)
-    # std /= len(train_loader.dataset)
-    #
-    # print(mean, std)
-
+    # # plot some of the images of the dataset
+    # check_out_images(train_loader)
 
     # load model pretrained on ImageNet
     resnet18 = models.resnet18(pretrained=True)
