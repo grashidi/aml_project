@@ -323,3 +323,28 @@ class DiceLoss(nn.Module):
         dice = (2.*intersection + smooth)/(inputs.sum() + targets.sum() + smooth)
 
         return 1 - dice
+
+
+def compute_mean_std(data_loader):
+    """
+    Computes mean and std for dataset of given dataloader.
+
+    Args:
+        data_loader (DataLoader class): Dataloader containing x-rays or CT-scans
+    Returns:
+        mean: Dataset's mean value
+        std: Dataset's standard deviation value
+    """
+    mean = 0.
+    std = 0.
+    for batch_samples in tqdm(data_loader):
+        images, labels = batch_samples['img'], batch_samples['label']
+        samples = images.size(0)
+        images = images.view(samples, images.size(1), -1)
+        mean += images.mean(2).sum(0)
+        std += images.std(2).sum(0)
+
+    mean /= len(data_loader.dataset)
+    std /= len(data_loader.dataset)
+
+    return mean, std
