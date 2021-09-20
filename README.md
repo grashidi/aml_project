@@ -58,6 +58,7 @@ The tree structure below presents the data folder's different subfolders.<br>
  ```
  
 ## Running the code
+#### DenseNet121
 #### ResNet18
 Change into resnet18 directory<br>
 ```cd code/resnet18```<br>
@@ -88,31 +89,15 @@ This will create a grad_cam folder with a subfolder of the particular grad_cam r
 The images' labels and the model's predictions will be indicated in the created images.<br>
   
 #### ROI mask channel replacement or ROI mask overlay
-To change the ROI application method open the code/util/covid_dataset.py file. Then go the mask_transform method in line 141.<br><br>
+You can control the ROI mask application method the CovidDatset's overlay parameter.<br>
+If you set the overlay parameter to <b>True</b> the ROI mask overlay will be applied e.g.:<br>
 
-```
-def mask_transform(self, x):
-        """
-        Set pixels outside of mask to zero
-
-        Args:
-            x (tensor): Tensor to be masked
-
-        Returns:
-            x (tensor): Masked tensor
-        """
-        if self.unet:
-            threshold = 0.5
-            mask = self.unet(x[None,:,:,:])
-            mask = self.normalize_to_range_0_1(mask)
-            zero = torch.zeros_like(mask, dtype=torch.long)
-            one = torch.ones_like(mask, dtype=torch.long)
-            mask = torch.where(mask >= threshold, one, zero)
-            x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask
-            # x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
-        return x
-```
-In the version above the input image's last channel will be replace with the ROI mask. If you want to apply the ROI mask overlay method which sets all pixels located outside of the mask to the minimum value of all pixels just comment out this line of code:<br>
-```# x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask```<br><br>
-And activate the line of code below:<br>
-```x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value```<br><br>
+```CovidDataset(root_dir=root_dir,
+                txt_COVID=txt_COVID + "train.txt",
+                txt_NonCOVID=txt_NonCOVID + "train.txt",
+                train=True,
+                unet=unet,
+                overlay=True,
+                use_cache=USE_CACHE)
+  ```
+ Otherwise input image's last channel will be replaced with the ROI mask. The default value is set to <b>False</b>
