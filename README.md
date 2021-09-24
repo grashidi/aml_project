@@ -79,7 +79,7 @@ You can run those scenarios by 2 approaches <br>
 #### ResNet18
 Change into resnet18 directory<br>
 ```cd code/resnet18```<br>
-Now you have two options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
+Now you have two options: train ResNet18 without ROI mask application, train ResNet18 with ROI mask application.<br><br>
 For training without ROI mask application change into the <b>no_ROI</b> directory and run the main.py file.<br>
 ```cd no_ROI```<br>
 ```python main.py```<br><br>
