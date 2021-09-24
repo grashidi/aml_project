@@ -59,10 +59,24 @@ The tree structure below presents the data folder's different subfolders.<br>
  
 ## Running the code
 #### DenseNet121
+Change into DenseNet121 directory by<br>
+```cd code/densenet121``` <br><br>
+You can run those scenarios by 2 approaches <br>
+
+1. Using Linux command lines<br>
+    Both `without_ROI` and `with_ROI` training sessions can be run by the command as follows <br>
+    ```cd <no/with_ROI>```<br>
+    ```python main.py``` <br>
+2. Using `densenet121.ipynb` Notebook file<br>
+    This notebook is ___still in beta version___, which is more friendly to anyone who is not familiar with command line. Processes as mentioned above are already written in separated MagicPython cells. The process shall be implemented simultaneously. You also have option to plot your results to see how good your results are by changing path to your preferred statistic files. 
+
+***Remark!!*** : Please have a look on **CovidDataset** function in main.py file. Please read the notice at *ROI mask channel replacement or ROI mask overlay* section.
+
+
 #### ResNet18
 Change into resnet18 directory<br>
 ```cd code/resnet18```<br>
-Now you have to options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
+Now you have two options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
 For training without ROI mask application change into the <b>no_ROI</b> directory and run the main.py file.<br>
 ```cd no_ROI```<br>
 ```python main.py```<br><br>
@@ -71,8 +85,8 @@ For training without ROI mask application change into the <b>no_ROI</b> director
 ```cd with_ROI```<br>
 ```python main.py```<br><br>
 
-A model_backup folder will be created storing the trained model and the training statisics. If you also want to save the test statistics
-you will have to provide the test function in the main.py file with a test stastics file path e.g.:<br>
+A model_backup folder will be created storing the trained model and the training statistics. If you also want to save the test statistics
+you will have to provide the test function in the main.py file with a test statistics file path e.g.:<br>
 ```test(resnet18, criterion, test_loader, "some_test_statistics_file_path", additional_stats_enabled=True)```<br><br>
 
 #### Grad-CAM investigation
@@ -89,7 +103,7 @@ This will create a grad_cam folder with a subfolder of the particular grad_cam r
 The images' labels and the model's predictions will be indicated in the created images.<br>
   
 #### ROI mask channel replacement or ROI mask overlay
-You can control the ROI mask application method with the CovidDatset's overlay parameter.<br>
+You can control the ROI mask application method with the CovidDataset's overlay parameter.<br>
 If you set the overlay parameter to <b>True</b> the ROI mask overlay will be applied e.g.:<br>
 
 ```
