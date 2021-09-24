@@ -17,7 +17,7 @@ if __name__ == "__main__":
     
     USE_CACHE = False # Make sure you have enough RAM available
 
-    root_dir = ["../../data/ct_scan/", "../../data/xray/"]
+    root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
     txt_COVID = "data_split/COVID/"
     txt_NonCOVID = "data_split/NonCOVID/"
 
@@ -87,13 +87,16 @@ if __name__ == "__main__":
     stats_path = "model_backup/stats_densenet121_e{}_bs{}_{}.json".format(NUM_EPOCHS,
                                                                      BATCH_SIZE,
                                                                      time)
+    stats_test_path = "model_backup/stats_densenet121_e{}_bs{}_{}_test.json".format(NUM_EPOCHS,
+                                                                     BATCH_SIZE,
+                                                                     time)
     optimizer = optim.Adam(densenet121.parameters())
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=1)
     criterion = nn.CrossEntropyLoss()
 
     fit(densenet121, optimizer, scheduler, criterion, train_loader, val_loader,
         NUM_EPOCHS, stats_path, additional_stats_enabled=True)
-    test(densenet121, criterion, test_loader, additional_stats_enabled=True)
+    test(densenet121, criterion, test_loader, stats_path = stats_test_path,additional_stats_enabled=True)
 
     torch.save(densenet121.state_dict(),
                "model_backup/densenet121_e{}_bs{}_{}.pt".format(NUM_EPOCHS,

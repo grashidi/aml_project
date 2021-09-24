@@ -62,10 +62,10 @@ BATCH_SIZE = 1
 
 device = "cuda"
 
-model_name = "densenet121_e10_bs10_17-09-2021_14:10:46.pt"
-model_path = "no_ROI/model_backup/" + model_name
+model_name = "densenet121_e10_bs10_21-09-2021_01:58:47.pt"
+model_path = "model_backup/" + model_name
 
-root_dir = ["../../data/ct_scan/", "../../data/xray/"]
+root_dir = ["../../../data/ct_scan/", "../../../data/xray/"]
 txt_COVID = "data_split/COVID/"
 txt_NonCOVID = "data_split/NonCOVID/"
 
