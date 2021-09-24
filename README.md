@@ -115,4 +115,4 @@ CovidDataset(root_dir=root_dir,
              overlay=True,
              use_cache=USE_CACHE)
   ```
- Otherwise input image's last channel will be replaced with the ROI mask. The default value is set to <b>False</b>.
+ Otherwise the input image's last channel will be replaced with the ROI mask. The default value is set to <b>False</b>.
