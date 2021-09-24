@@ -10,7 +10,7 @@ Clone repository:<br>
 Change into code directory:<br>
   ```cd aml_project/code```<br>
   
-If the python3-venv package is not installed on your machine please install it before you run the installation script with the following command:<br>
+If the <b>python3-venv</b> package is not installed on your machine please install it before you run the installation script with the following command:<br>
 ```apt install python3.8-venv```<br>
   
 Make installation script executable:<br>
