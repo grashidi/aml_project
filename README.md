@@ -89,6 +89,18 @@ A model_backup folder will be created storing the trained model and the training
 you will have to provide the test function in the main.py file with a test statistics file path e.g.:<br>
 ```test(resnet18, criterion, test_loader, "some_test_statistics_file_path", additional_stats_enabled=True)```<br><br>
 
+#### UNet
+Change into the unet directory<br>
+```cd code/unet```<br><br>
+To start the training for UNet run:<br>
+```pyhton main.py```<br><br>
+
+A model_backup folder will be created storing the trained model and the training statistics. If you also want to save the test statistics
+you will have to provide the test function in the main.py file with a test statistics file path e.g.:<br>
+```test(unet, criterion, test_loader, "some_test_statistics_file_path")```<br><br>
+As additional statistics are not implmented for UNet they can <b>not</b> enabled.<br>
+The default value for the ```addtional_stats``` parameter is ```False```.
+
 #### Grad-CAM investigation
 If you want to conduct the Grad-CAM investigation change into the directory of the corresponding model e.g.:<br>
 ```cd resnet18/no_ROI```<br><br>
