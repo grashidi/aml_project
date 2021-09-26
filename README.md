@@ -10,6 +10,9 @@ Clone repository:<br>
 Change into code directory:<br>
   ```cd aml_project/code```<br>
   
+If the <b>python3-venv</b> package is not installed on your machine please install it before you run the installation script with the following command:<br>
+```apt install python3.8-venv```<br>
+  
 Make installation script executable:<br>
   ```chmod +x install.sh```<br>
   
@@ -58,10 +61,25 @@ The tree structure below presents the data folder's different subfolders.<br>
  ```
  
 ## Running the code
+#### DenseNet121
+Change into DenseNet121 directory by<br>
+```cd code/densenet121``` <br><br>
+You can run those scenarios by 2 approaches <br>
+
+1. Using Linux command lines<br>
+    Both `without_ROI` and `with_ROI` training sessions can be run by the command as follows <br>
+    ```cd <no/with_ROI>```<br>
+    ```python main.py``` <br>
+2. Using `densenet121.ipynb` Notebook file<br>
+    This notebook is ___still in beta version___, which is more friendly to anyone who is not familiar with command line. Processes as mentioned above are already written in separated MagicPython cells. The process shall be implemented simultaneously. You also have option to plot your results to see how good your results are by changing path to your preferred statistic files. 
+
+***Remark!!*** : Please have a look on **CovidDataset** function in main.py file. Please read the notice at *ROI mask channel replacement or ROI mask overlay* section.
+
+
 #### ResNet18
 Change into resnet18 directory<br>
 ```cd code/resnet18```<br>
-Now you have to options train ResNet18 without ROI mask application or train ResNet18 with ROI mask application.<br><br>
+Now you have two options: train ResNet18 without ROI mask application, train ResNet18 with ROI mask application.<br><br>
 For training without ROI mask application change into the <b>no_ROI</b> directory and run the main.py file.<br>
 ```cd no_ROI```<br>
 ```python main.py```<br><br>
@@ -70,9 +88,21 @@ For training without ROI mask application change into the <b>no_ROI</b> director
 ```cd with_ROI```<br>
 ```python main.py```<br><br>
 
-A model_backup folder will be created storing the trained model and the training statisics. If you also want to save the test statistics
-you will have to provide the test function in the main.py file with a test stastics file path e.g.:<br>
+Before the training starts the pre-trained weights for the ResNet18 will be downloaded the first time you start the training. A model_backup folder will be created storing the trained model and the training statistics. If you also want to save the test statistics
+you will have to provide the test function in the main.py file with a test statistics file path e.g.:<br>
 ```test(resnet18, criterion, test_loader, "some_test_statistics_file_path", additional_stats_enabled=True)```<br><br>
+
+#### UNet
+Change into the unet directory<br>
+```cd code/unet```<br><br>
+To start the training for UNet run:<br>
+```python main.py```<br><br>
+
+Before the training starts the pre-trained weights for the UNet will be downloaded the first time you start the training. A model_backup folder will be created storing the trained model and the training statistics. If you also want to save the test statistics
+you will have to provide the test function in the main.py file with a test statistics file path e.g.:<br>
+```test(unet, criterion, test_loader, "some_test_statistics_file_path")```<br><br>
+As additional statistics are not implmented for UNet they can <b>not</b> be enabled. Enabling the additional statistics for UNet will result in an error of the training function or the the test function.<br>
+The default value for the ```addtional_stats``` parameter is ```False```.
 
 #### Grad-CAM investigation
 If you want to conduct the Grad-CAM investigation change into the directory of the corresponding model e.g.:<br>
@@ -88,31 +118,16 @@ This will create a grad_cam folder with a subfolder of the particular grad_cam r
 The images' labels and the model's predictions will be indicated in the created images.<br>
   
 #### ROI mask channel replacement or ROI mask overlay
-To change the ROI application method open the code/util/covid_dataset.py file. Then go the mask_transform method in line 141.<br><br>
+You can control the ROI mask application method with the CovidDataset's overlay parameter.<br>
+If you set the overlay parameter to ```True``` the ROI mask overlay will be applied e.g.:<br>
 
 ```
-def mask_transform(self, x):
-        """
-        Set pixels outside of mask to zero
-
-        Args:
-            x (tensor): Tensor to be masked
-
-        Returns:
-            x (tensor): Masked tensor
-        """
-        if self.unet:
-            threshold = 0.5
-            mask = self.unet(x[None,:,:,:])
-            mask = self.normalize_to_range_0_1(mask)
-            zero = torch.zeros_like(mask, dtype=torch.long)
-            one = torch.ones_like(mask, dtype=torch.long)
-            mask = torch.where(mask >= threshold, one, zero)
-            x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask
-            # x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value
-        return x
-```
-In the version above the input image's last channel will be replace with the ROI mask. If you want to apply the ROI mask overlay method which sets all pixels located outside of the mask to the minimum value of all pixels just comment out this line of code:<br>
-```# x[-1,:,:] = mask[0,0,:,:] # replace last channel with mask```<br><br>
-And activate the line of code below:<br>
-```x[mask[0,:,:,:].repeat(3,1,1) == 0] = torch.min(x) # set pixels outside of mask to min value```<br><br>
+CovidDataset(root_dir=root_dir,
+             txt_COVID=txt_COVID + "train.txt",
+             txt_NonCOVID=txt_NonCOVID + "train.txt",
+             train=True,
+             unet=unet,
+             overlay=True,
+             use_cache=USE_CACHE)
+  ```
+ Otherwise the input image's last channel will be replaced with the ROI mask. The default value is set to ```False```.

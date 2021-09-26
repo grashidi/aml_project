@@ -1,0 +1,1 @@
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qsegmentation: Contains the x-ray images, CT-scans and the corresponding data split for UNet.\\E$"}
